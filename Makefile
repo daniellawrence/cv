@@ -8,7 +8,7 @@ setup:
 	go install github.com/bufbuild/buf/cmd/buf@latest
 
 proto:
-	cd shared/proto && $(BUF) generate
+	cd proto && $(BUF) generate
 
 test:
-	cd backend/search && go test -v ./...
+	cd backend/search && go test ./...

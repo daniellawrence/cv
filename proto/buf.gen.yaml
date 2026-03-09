@@ -2,6 +2,6 @@ version: v1
 
 plugins:
   - plugin: go
-    out: ../../backend/search/proto
+    out: ../gen/go
     opt:
       - paths=source_relative

@@ -3,14 +3,14 @@ package search
 import (
 	"testing"
 
-	pb "github.com/daniellawrence/cv/backend/search/proto"
+	searchv1 "github.com/daniellawrence/cv/gen/go/search/v1"
 	"google.golang.org/protobuf/proto"
 )
 
 func TestProto(t *testing.T) {
 
-	req := &pb.SearchRequest{
-		Query: "hello",
+	req := &searchv1.SearchRequest{
+		Query: "golang",
 	}
 
 	data, err := proto.Marshal(req)
@@ -18,7 +18,7 @@ func TestProto(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var out pb.SearchRequest
+	var out searchv1.SearchRequest
 
 	err = proto.Unmarshal(data, &out)
 	if err != nil {
