@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/daniellawrence/cv/backend/common"
@@ -79,10 +78,5 @@ func main() {
 	mux.HandleFunc("/identity", listidentity)
 	mux.HandleFunc("/identity/{id}", getIdentity)
 
-	log.Println("identity service listening on :8083")
-
-	err := http.ListenAndServe(":8083", common.CorsMiddleware(mux))
-	if err != nil {
-		log.Fatal(err)
-	}
+	common.Listen(mux)
 }

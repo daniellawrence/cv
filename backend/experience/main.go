@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/daniellawrence/cv/backend/common"
@@ -139,10 +138,5 @@ func main() {
 
 	mux.HandleFunc("/experience", listexperience)
 
-	log.Println("experience service listening on :8080")
-
-	err := http.ListenAndServe(":8080", common.CorsMiddleware(mux))
-	if err != nil {
-		log.Fatal(err)
-	}
+	common.Listen(mux)
 }

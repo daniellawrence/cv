@@ -7,3 +7,27 @@ releases:
     chart: ./chart
     values:
       - ../../backend/interest/helm.values.yaml
+
+  - name: education
+    namespace: education
+    chart: ./chart
+    values:
+      - ../../backend/education/helm.values.yaml
+
+  - name: qrcode
+    namespace: qrcode
+    chart: ./chart
+    values:
+      - ../../backend/qrcode/helm.values.yaml
+
+  - name: identity
+    namespace: identity
+    chart: ./chart
+    values:
+      - ../../backend/identity/helm.values.yaml
+
+  - name: experience
+    namespace: experience
+    chart: ./chart
+    values:
+      - ../../backend/experience/helm.values.yaml

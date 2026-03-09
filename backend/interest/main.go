@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"net/http"
 
 	common "github.com/daniellawrence/cv/backend/common"
@@ -102,12 +101,6 @@ func main() {
 
 	mux.HandleFunc("/interest", listInterest)
 	mux.HandleFunc("/interest/{id}", getInterest)
+	common.Listen(mux)
 
-	addr := common.GetListenAddr()
-	log.Printf("Starting server on %s\n", addr)
-
-	err := http.ListenAndServe(addr, common.CorsMiddleware(mux))
-	if err != nil {
-		log.Fatal(err)
-	}
 }

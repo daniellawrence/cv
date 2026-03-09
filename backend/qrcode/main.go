@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/base64"
-	"log"
 	"net/http"
 
 	"github.com/daniellawrence/cv/backend/common"
@@ -79,10 +78,5 @@ func main() {
 
 	mux.HandleFunc("/qrcode", getQRCode)
 
-	log.Println("qrcode service listening on :8084")
-
-	err := http.ListenAndServe(":8084", common.CorsMiddleware(mux))
-	if err != nil {
-		log.Fatal(err)
-	}
+	common.Listen(mux)
 }
