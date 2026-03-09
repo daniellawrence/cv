@@ -13,3 +13,4 @@ ingress:
   className: traefik
   host: basic-app.local
   path: /
+  domain: localhost
