@@ -1,0 +1,3 @@
+# CV
+
+Writing a CV is boring... so I tricked myself into doing it by doing this...

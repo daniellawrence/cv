@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package experience.v1;
+
+option go_package = "github.com/daniellawrence/cv/gen/go/experience/v1;experiencev1";
+
+message Experience {
+  string id = 1;
+
+  string company = 2;
+  string title = 3;
+
+  string start_date = 4; // YYYY-MM-DD
+  string end_date = 5;   // YYYY-MM-DD or empty if current
+
+  string location = 6;
+
+  repeated string highlights = 7; // key achievements
+  repeated string skills = 8;     // technologies used
+}
+
+message GetExperienceRequest {
+  string id = 1;
+}
+
+message ListExperienceRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message ListExperienceResponse {
+  repeated Experience experience = 1;
+  string next_page_token = 2;
+}
+
+service ExperienceService {
+  rpc GetExperience(GetExperienceRequest) returns (Experience);
+
+  rpc ListExperience(ListExperienceRequest)
+      returns (ListExperienceResponse);
+}
