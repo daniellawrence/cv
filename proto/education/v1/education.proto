@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package education.v1;
+
+option go_package = "github.com/daniellawrence/cv/gen/go/education/v1;educationv1";
+
+message Education {
+  string id = 1;
+  string institution = 2;
+  string degree = 3;
+  string field_of_study = 4;
+
+  string start_date = 5;
+  string end_date = 6;
+
+  string description = 7;
+  repeated string achievements = 8;
+}
+
+message GetEducationRequest {
+  string id = 1;
+}
+
+message ListEducationRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message ListEducationResponse {
+  repeated Education education = 1;
+  string next_page_token = 2;
+}
+
+service EducationService {
+  rpc GetEducation(GetEducationRequest) returns (Education);
+
+  rpc ListEducation(ListEducationRequest)
+      returns (ListEducationResponse);
+}
