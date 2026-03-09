@@ -1,0 +1,8 @@
+{
+    "name": "@cv/proto",
+    "version": "1.0.0",
+    "type": "module",
+    "dependencies": {
+        "@bufbuild/protobuf": "^2.0.0"
+    }
+}
