@@ -1,11 +1,12 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 
 	educationv1 "github.com/daniellawrence/cv/gen/go/education/v1"
+
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 var educations = []*educationv1.Education{
@@ -34,13 +35,22 @@ func cors(next http.Handler) http.Handler {
 }
 
 func listEducation(w http.ResponseWriter, r *http.Request) {
+	m := protojson.MarshalOptions{
+		UseProtoNames:   false,
+		EmitUnpopulated: true,
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 
-	err := json.NewEncoder(w).Encode(educations)
+	data, err := m.Marshal(&educationv1.ListEducationResponse{
+		Education: educations,
+	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	w.Write(data)
 }
 
 func main() {

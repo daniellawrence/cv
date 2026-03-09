@@ -12,5 +12,5 @@ export async function fetchEducation(): Promise<Education[]> {
 
     const json = await res.json()
 
-    return json.map((e: unknown) => fromJson(EducationSchema, e))
+    return json.education.map(e => fromJson(EducationSchema, e))
 }
