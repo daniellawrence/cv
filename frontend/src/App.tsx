@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import EducationList from "./components/educationList"
+import ExperienceList from "./components/expereienceList"
 
 export default function App() {
 
@@ -15,10 +16,12 @@ export default function App() {
 
             <div className="left-column">
                 <div className="section-title">Experience (past 10 years)</div>
+                <ExperienceList limit={5} offset={0} />
             </div>
 
             <div className="right-column">
                 <div className="section-title">Experience (cont.)</div>
+                <ExperienceList limit={5} offset={5} />
                 <EducationList />
             </div>
         </div>
