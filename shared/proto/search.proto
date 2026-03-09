@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package search;
+
+option go_package = "github.com/daniellawrence/cv/backend/search/proto;proto";
+
+message SearchRequest {
+  string query = 1;
+}
+
+message SearchResponse {
+  repeated string results = 1;
+}
