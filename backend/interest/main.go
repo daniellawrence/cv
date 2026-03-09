@@ -58,7 +58,12 @@ func listInterest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write(data)
+	_, err = w.Write(data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 }
 
 func getInterest(w http.ResponseWriter, r *http.Request) {
@@ -79,7 +84,11 @@ func getInterest(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			w.Write(data)
+			_, err = w.Write(data)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 			return
 		}
 	}

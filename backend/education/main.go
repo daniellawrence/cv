@@ -36,7 +36,11 @@ func listEducation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write(data)
+	_, err = w.Write(data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func main() {

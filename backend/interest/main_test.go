@@ -1,32 +1,73 @@
 package main
 
 import (
+	"encoding/json"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	interestv1 "github.com/daniellawrence/cv/gen/go/interest/v1"
 )
 
-func TestInterestFields(t *testing.T) {
+func setupMux() *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/interest", listInterest)
+	mux.HandleFunc("/interest/{id}", getInterest)
+	return mux
+}
 
-	tests := []struct {
-		id          string
-		institution string
-		degree      string
-	}{
-		{"1", "University of Melbourne", "Computer Science"},
-		{"2", "RMIT University", "Software Engineering"},
+func TestListInterest(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/interest", nil)
+	rr := httptest.NewRecorder()
+
+	mux := setupMux()
+	mux.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("expected status 200 got %d", rr.Code)
 	}
 
-	for _, tt := range tests {
+	var resp interestv1.ListInterestResponse
+	err := json.Unmarshal(rr.Body.Bytes(), &resp)
+	if err != nil {
+		t.Fatalf("failed to unmarshal response: %v", err)
+	}
 
-		e := &interestv1.Interest{
-			Id:      tt.id,
-			Company: tt.institution,
-			Title:   tt.degree,
-		}
+	if len(resp.Interest) != len(interests) {
+		t.Fatalf("expected %d interests got %d", len(interests), len(resp.Interest))
+	}
+}
 
-		if e.Id != tt.id {
-			t.Fatalf("expected id %s got %s", tt.id, e.Id)
-		}
+func TestGetInterestSuccess(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/interest/tech", nil)
+	rr := httptest.NewRecorder()
+
+	mux := setupMux()
+	mux.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("expected status 200 got %d", rr.Code)
+	}
+
+	var interest interestv1.Interest
+	err := json.Unmarshal(rr.Body.Bytes(), &interest)
+	if err != nil {
+		t.Fatalf("failed to unmarshal response: %v", err)
+	}
+
+	if interest.Id != "tech" {
+		t.Fatalf("expected id tech got %s", interest.Id)
+	}
+}
+
+func TestGetInterestNotFound(t *testing.T) {
+	req := httptest.NewRequest(http.MethodGet, "/interest/unknown", nil)
+	rr := httptest.NewRecorder()
+
+	mux := setupMux()
+	mux.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusNotFound {
+		t.Fatalf("expected status 404 got %d", rr.Code)
 	}
 }
