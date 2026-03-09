@@ -10,7 +10,7 @@ import (
 
 var educations = []*educationv1.Education{
 	{
-		Id:          "1",
+		Id:          1,
 		Institution: "Griffith University",
 		Degree:      "Bachelor, Information Technology",
 		StartDate:   "2005-12",

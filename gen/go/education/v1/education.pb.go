@@ -23,14 +23,12 @@ const (
 
 type Education struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Institution   string                 `protobuf:"bytes,2,opt,name=institution,proto3" json:"institution,omitempty"`
 	Degree        string                 `protobuf:"bytes,3,opt,name=degree,proto3" json:"degree,omitempty"`
 	FieldOfStudy  string                 `protobuf:"bytes,4,opt,name=field_of_study,json=fieldOfStudy,proto3" json:"field_of_study,omitempty"`
 	StartDate     string                 `protobuf:"bytes,5,opt,name=start_date,json=startDate,proto3" json:"start_date,omitempty"`
 	EndDate       string                 `protobuf:"bytes,6,opt,name=end_date,json=endDate,proto3" json:"end_date,omitempty"`
-	Description   string                 `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty"`
-	Achievements  []string               `protobuf:"bytes,8,rep,name=achievements,proto3" json:"achievements,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -65,11 +63,11 @@ func (*Education) Descriptor() ([]byte, []int) {
 	return file_education_v1_education_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Education) GetId() string {
+func (x *Education) GetId() int32 {
 	if x != nil {
 		return x.Id
 	}
-	return ""
+	return 0
 }
 
 func (x *Education) GetInstitution() string {
@@ -107,23 +105,9 @@ func (x *Education) GetEndDate() string {
 	return ""
 }
 
-func (x *Education) GetDescription() string {
-	if x != nil {
-		return x.Description
-	}
-	return ""
-}
-
-func (x *Education) GetAchievements() []string {
-	if x != nil {
-		return x.Achievements
-	}
-	return nil
-}
-
 type GetEducationRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -158,11 +142,11 @@ func (*GetEducationRequest) Descriptor() ([]byte, []int) {
 	return file_education_v1_education_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *GetEducationRequest) GetId() string {
+func (x *GetEducationRequest) GetId() int32 {
 	if x != nil {
 		return x.Id
 	}
-	return ""
+	return 0
 }
 
 type ListEducationRequest struct {
@@ -273,19 +257,17 @@ var File_education_v1_education_proto protoreflect.FileDescriptor
 
 const file_education_v1_education_proto_rawDesc = "" +
 	"\n" +
-	"\x1ceducation/v1/education.proto\x12\feducation.v1\"\xfb\x01\n" +
+	"\x1ceducation/v1/education.proto\x12\feducation.v1\"\xb5\x01\n" +
 	"\tEducation\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12 \n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\x12 \n" +
 	"\vinstitution\x18\x02 \x01(\tR\vinstitution\x12\x16\n" +
 	"\x06degree\x18\x03 \x01(\tR\x06degree\x12$\n" +
 	"\x0efield_of_study\x18\x04 \x01(\tR\ffieldOfStudy\x12\x1d\n" +
 	"\n" +
 	"start_date\x18\x05 \x01(\tR\tstartDate\x12\x19\n" +
-	"\bend_date\x18\x06 \x01(\tR\aendDate\x12 \n" +
-	"\vdescription\x18\a \x01(\tR\vdescription\x12\"\n" +
-	"\fachievements\x18\b \x03(\tR\fachievements\"%\n" +
+	"\bend_date\x18\x06 \x01(\tR\aendDate\"%\n" +
 	"\x13GetEducationRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"R\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\"R\n" +
 	"\x14ListEducationRequest\x12\x1b\n" +
 	"\tpage_size\x18\x01 \x01(\x05R\bpageSize\x12\x1d\n" +
 	"\n" +

@@ -7,8 +7,8 @@ BUF=buf
 setup:
 	go install github.com/bufbuild/buf/cmd/buf@latest
 
-proto:
+proto: setup
 	cd proto && $(BUF) generate
 
-test:
+test: proto
 	cd backend/education && go test ./...

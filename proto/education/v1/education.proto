@@ -5,7 +5,7 @@ package education.v1;
 option go_package = "github.com/daniellawrence/cv/gen/go/education/v1;educationv1";
 
 message Education {
-  string id = 1;
+  int32 id = 1;
   string institution = 2;
   string degree = 3;
   string field_of_study = 4;
@@ -13,12 +13,10 @@ message Education {
   string start_date = 5;
   string end_date = 6;
 
-  string description = 7;
-  repeated string achievements = 8;
 }
 
 message GetEducationRequest {
-  string id = 1;
+  int32 id = 1;
 }
 
 message ListEducationRequest {

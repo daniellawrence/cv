@@ -9,12 +9,12 @@ import (
 func TestEducationFields(t *testing.T) {
 
 	tests := []struct {
-		id          string
+		id          int32
 		institution string
 		degree      string
 	}{
-		{"1", "University of Melbourne", "Computer Science"},
-		{"2", "RMIT University", "Software Engineering"},
+		{1, "University of Melbourne", "Computer Science"},
+		{2, "RMIT University", "Software Engineering"},
 	}
 
 	for _, tt := range tests {
@@ -26,7 +26,7 @@ func TestEducationFields(t *testing.T) {
 		}
 
 		if e.Id != tt.id {
-			t.Fatalf("expected id %s got %s", tt.id, e.Id)
+			t.Fatalf("expected id %d got %d", tt.id, e.Id)
 		}
 	}
 }
