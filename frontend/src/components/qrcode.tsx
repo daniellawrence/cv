@@ -15,7 +15,10 @@ export default function QRcode({ encode_url }: { encode_url: string }) {
   return (
     <>
       <div className="qr-code" id="qrcode">
-        <img src={`data:image/png;base64,${qrcode.imageBase64}`} width={150} height={150} />          
+        <a href={encode_url}>
+          <img src={`data:image/png;base64,${qrcode.imageBase64}`} width={150} height={150} />          
+          <small>{encode_url}</small>
+        </a>
       </div>
     </>
   )
