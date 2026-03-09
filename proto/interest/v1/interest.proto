@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package interest.v1;
+
+option go_package = "github.com/daniellawrence/cv/gen/go/interest/v1;interestv1";
+
+message Interest {
+  string id = 1;
+  string type = 2;
+  repeated string names = 3;
+}
+
+message GetInterestRequest {
+  string id = 1;
+}
+
+message ListInterestRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message ListInterestResponse {
+  repeated Interest interest = 1;
+  string next_page_token = 2;
+}
+
+service InterestService {
+  rpc GetInterest(GetInterestRequest) returns (Interest);
+
+  rpc ListInterest(ListInterestRequest)
+      returns (ListInterestResponse);
+}

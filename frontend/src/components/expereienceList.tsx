@@ -21,12 +21,12 @@ export default function ExperienceList({limit, offset}: {limit: number; offset: 
                 <div class="location">{e.location}</div>
                 <div class="job-bullets">
                     {e.highlights.map((h) => (     
-                    <div class="bullet">{h}</div>
+                    <div key={h} class="bullet">{h}</div>
                     ))}
                 </div>
                 <div class="tech-stack">
                     {e.skills.map((k) => (     
-                    <span class="tech-stack-skill">{k}, </span>
+                    <span key={k} class="tech-stack-skill">{k}, </span>
                     ))}
                 </div>
             </div>

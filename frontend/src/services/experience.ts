@@ -1,10 +1,11 @@
 import { fromJson, type MessageShape } from "@bufbuild/protobuf"
 import { ExperienceSchema } from "@cv/proto/experience/v1/experience_pb"
+import { ServiceEndpoints } from "./endpoints";
 
 export type Experience = MessageShape<typeof ExperienceSchema>
 
 export async function fetchExperience({ limit, offset }: { limit: number; offset: number }): Promise<Experience[]> {
-    const res = await fetch("http://localhost:8080/experience")
+    const res = await fetch(ServiceEndpoints.experience)
 
     if (!res.ok) {
         throw new Error(`Failed to fetch experience`)

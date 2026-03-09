@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/daniellawrence/cv/backend/common"
 	experiencev1 "github.com/daniellawrence/cv/gen/go/experience/v1"
 
 	"google.golang.org/protobuf/encoding/protojson"
@@ -109,21 +110,6 @@ var experiences = []*experiencev1.Experience{
 	},
 }
 
-func cors(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-
-		if r.Method == http.MethodOptions {
-			w.WriteHeader(http.StatusOK)
-			return
-		}
-
-		next.ServeHTTP(w, r)
-	})
-}
-
 func listexperience(w http.ResponseWriter, r *http.Request) {
 	m := protojson.MarshalOptions{
 		UseProtoNames:   false,
@@ -151,7 +137,7 @@ func main() {
 
 	log.Println("experience service listening on :8080")
 
-	err := http.ListenAndServe(":8080", cors(mux))
+	err := http.ListenAndServe(":8080", common.CorsMiddleware(mux))
 	if err != nil {
 		log.Fatal(err)
 	}
