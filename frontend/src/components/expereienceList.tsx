@@ -14,19 +14,19 @@ export default function ExperienceList({limit, offset}: {limit: number; offset: 
       <div className="section-title">Experience</div>
 
       {experience.map((e) => (         
-            <div class="experience-item" key={e.id}>
-                <div class="company-name">{e.company}</div>
-                <div class="job-title">{e.title}</div>
-                <div class="job-dates">{e.startDate} – {e.endDate}</div>
-                <div class="location">{e.location}</div>
-                <div class="job-bullets">
+            <div className="experience-item" key={e.id}>
+                <div className="company-name">{e.company}</div>
+                <div className="job-title">{e.title}</div>
+                <div className="job-dates">{e.startDate} – {e.endDate}</div>
+                <div className="location">{e.location}</div>
+                <div className="job-bullets">
                     {e.highlights.map((h) => (     
-                    <div key={h} class="bullet">{h}</div>
+                    <div key={h} className="bullet">{h}</div>
                     ))}
                 </div>
-                <div class="tech-stack">
+                <div className="tech-stack">
                     {e.skills.map((k) => (     
-                    <span key={k} class="tech-stack-skill">{k}, </span>
+                    <span key={k} className="tech-stack-skill">{k}, </span>
                     ))}
                 </div>
             </div>

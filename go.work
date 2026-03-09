@@ -4,7 +4,8 @@ use (
 	./backend/common
 	./backend/education
 	./backend/experience
-	./backend/interest
 	./backend/identity
+	./backend/interest
+	./backend/qrcode
 	./gen/go
 )

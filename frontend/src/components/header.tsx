@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { fetchIdentity, type Identity } from "../services/identity"
+import QRcode from "./qrcode"
 
 export default function Header({ id }: { id: string }) {
   const [identity, setIdentity] = useState<Identity | null>(null)
@@ -11,6 +12,7 @@ export default function Header({ id }: { id: string }) {
   if (!identity) {
     return <div>Loading...</div>
   }
+  
 
   return (
     <>
@@ -19,7 +21,7 @@ export default function Header({ id }: { id: string }) {
                 <h1>{identity.name}</h1>
                 <p><a href="mailto: {identity.email}">{identity.email}</a></p>
             </div>
-            <div className="qr-code" id="qrcode"></div>
+            <QRcode encode_url={identity.linkedin} />
         </div>
     </>
   )

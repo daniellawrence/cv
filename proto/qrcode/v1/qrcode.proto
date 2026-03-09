@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package qrcode.v1;
+
+option go_package = "github.com/daniellawrence/cv/gen/go/qrcode/v1;qrcodev1";
+
+message GenerateQRCodeRequest {
+  string url = 1; // URL to encode into the QR code
+}
+
+message GenerateQRCodeResponse {
+  string url = 1;
+  string image_base64 = 2; // base64 encoded PNG image
+}
+
+service QRCodeService {
+  rpc GenerateQRCode(GenerateQRCodeRequest) returns (GenerateQRCodeResponse);
+}

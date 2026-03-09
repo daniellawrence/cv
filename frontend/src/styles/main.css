@@ -68,6 +68,7 @@ body {
     overflow-y: auto;
     max-height: 9.3in;
     padding-right: 0.15in;
+    margin-top: -100px;
 }
 
 /* Right Column - Education and Skills */
@@ -75,6 +76,7 @@ body {
     overflow-y: auto;
     max-height: 9.3in;
     padding-left: 0.15in;
+    margin-top: -100px;
 }
 
 .section-title {

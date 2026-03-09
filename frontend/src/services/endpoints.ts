@@ -5,4 +5,5 @@ export const ServiceEndpoints = {
     education: env.EDUCATION_SERVICE_URL ?? "http://localhost:8081/education",
     interest: env.INTEREST_SERVICE_URL ?? "http://localhost:8082/interest",
     identity: env.IDENTITIY_SERVICE_URL ?? "http://localhost:8083/identity",
+    qrcode: env.QRCODE_SERVICE_URL ?? "http://localhost:8084/qrcode",
 }
