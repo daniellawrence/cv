@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import EducationList from "./components/educationList"
 import ExperienceList from "./components/expereienceList"
 import InterestList from "./components/interestList"
+import Header from "./components/header"
 
 export default function App() {
 
@@ -9,12 +10,8 @@ export default function App() {
   return (
     <>
         <div className="container">
-            <div className="header">
-                <div className="header-left">
-                    <h1>Daniel Lawrence</h1>
-                </div>
-            </div>
-
+            <Header id="dsl" />
+            
             <div className="left-column">
                 <div className="section-title">Experience (past 10 years)</div>
                 <ExperienceList limit={4} offset={0} />
