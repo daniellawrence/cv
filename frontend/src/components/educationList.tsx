@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { fetchEducation, type Education } from "../services/education"
 
-export default function Education() {
+export default function EducationList() {
   const [education, setEducation] = useState<Education[]>([])
 
   useEffect(() => {
@@ -10,14 +10,14 @@ export default function Education() {
 
   return (
     <section>
-      <h2>Education</h2>
+      <div className="section-title">Education</div>
 
-      {education.map((e) => (
-        <div key={e.id}>
-          <strong>{e.institution}</strong>
-          <div>{e.degree}</div>
-          <div>{e.startDate} – {e.endDate}</div>
-        </div>
+      {education.map((e) => (         
+          <div className="education-item" key={e.id}>
+              <div className="degree">{e.degree}</div>
+              <div className="school">{e.institution}</div>
+              <div className="year">{e.startDate} – {e.endDate}</div>
+          </div>
       ))}
     </section>
   )

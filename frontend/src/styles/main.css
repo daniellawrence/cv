@@ -1,0 +1,206 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    color: #1a1a1a;
+    background: #ffffff;
+    line-height: 1.4;
+}
+
+.container {
+    max-width: 8.5in;
+    height: 11in;
+    margin: 0 auto;
+    background: white;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.3in;
+    padding: 0.6in;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Header - spans both columns */
+.header {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.08in;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.header-left h1 {
+    font-size: 20pt;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.1;
+}
+
+.header-left p {
+    font-size: 8.5pt;
+    color: #666;
+    margin: 0.02in 0;
+}
+
+.qr-code {
+    width: 0.8in;
+    height: 0.8in;
+    background: #ffffff;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qr-code canvas {
+    width: 100%;
+    height: 100%;
+}
+
+/* Left Column - Experience */
+.left-column {
+    overflow-y: auto;
+    max-height: 9.3in;
+    padding-right: 0.15in;
+}
+
+/* Right Column - Education and Skills */
+.right-column {
+    overflow-y: auto;
+    max-height: 9.3in;
+    padding-left: 0.15in;
+}
+
+.section-title {
+    font-size: 11pt;
+    font-weight: 700;
+    margin: 0.05in 0 0.1in 0;
+    color: #1a1a1a;
+}
+
+.experience-item {
+    margin-bottom: 0.14in;
+    font-size: 9pt;
+}
+
+.company-name {
+    font-weight: 700;
+    font-size: 9pt;
+    color: #1a1a1a;
+    margin: 0.08in 0 0.02in 0;
+}
+
+.job-title {
+    font-size: 8.5pt;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.job-dates {
+    font-size: 8pt;
+    color: #666;
+}
+
+.job-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.02in;
+}
+
+.location {
+    font-size: 8pt;
+    color: #666;
+    margin-bottom: 0.04in;
+}
+
+.job-bullets {
+    font-size: 8pt;
+    color: #333;
+    margin: 0.03in 0;
+    line-height: 1.3;
+}
+
+.bullet {
+    margin-left: 0.15in;
+    text-indent: -0.1in;
+    margin-bottom: 0.02in;
+}
+
+.bullet:before {
+    content: "• ";
+    margin-right: 0.05in;
+}
+
+.tech-stack {
+    font-size: 7.5pt;
+    color: #666;
+    margin-top: 0.02in;
+    font-style: italic;
+}
+
+.education-item {
+    margin-bottom: 0.12in;
+    font-size: 8.5pt;
+}
+
+.degree {
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 0.01in;
+}
+
+.school {
+    color: #333;
+    font-size: 8pt;
+    margin-bottom: 0.01in;
+}
+
+.year {
+    font-size: 7.5pt;
+    color: #666;
+}
+
+.skills-section {
+    margin-bottom: 0.12in;
+}
+
+.skill-category {
+    font-size: 8.5pt;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 0.02in;
+}
+
+.skill-text {
+    font-size: 8pt;
+    color: #333;
+    line-height: 1.3;
+}
+
+.subsection-title {
+    font-weight: 600;
+    font-size: 8.5pt;
+    margin: 0.08in 0 0.04in 0;
+    color: #1a1a1a;
+}
+
+@media print {
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        box-shadow: none;
+        max-width: 100%;
+        margin: 0;
+        height: auto;
+        padding: 0.5in;
+    }
+}
