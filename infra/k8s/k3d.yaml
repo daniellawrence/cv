@@ -1,0 +1,22 @@
+# https://k3d.io/v5.0.0/usage/configfile/
+---
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: k0
+servers: 1
+agents: 1
+image: docker.io/rancher/k3s:v1.33.4-k3s1
+
+ports:
+  - port: 80:80
+    nodeFilters:
+      - loadbalancer
+  - port: 443:443
+    nodeFilters:
+      - loadbalancer
+
+options:
+  kubeconfig:
+    updateDefaultKubeconfig: false
+    switchCurrentContext: false

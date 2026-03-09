@@ -1,0 +1,9 @@
+repositories: []
+
+releases:
+
+  - name: interest
+    namespace: interest
+    chart: ./chart
+    values:
+      - ../../backend/interest/helm.values.yaml

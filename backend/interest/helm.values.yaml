@@ -1,0 +1,13 @@
+replicaCount: 1
+
+image:
+  repository: dansysadm.com/images/interest
+
+service:
+  port: 8080
+
+ingress:
+  enabled: true
+  className: traefik
+  host: interest.localhost
+  path: /

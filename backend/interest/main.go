@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/daniellawrence/cv/backend/common"
+	common "github.com/daniellawrence/cv/backend/common"
 	interestv1 "github.com/daniellawrence/cv/gen/go/interest/v1"
 
 	"google.golang.org/protobuf/encoding/protojson"
@@ -103,9 +103,10 @@ func main() {
 	mux.HandleFunc("/interest", listInterest)
 	mux.HandleFunc("/interest/{id}", getInterest)
 
-	log.Println("interest service listening on :8082")
+	addr := common.GetListenAddr()
+	log.Printf("Starting server on %s\n", addr)
 
-	err := http.ListenAndServe(":8082", common.CorsMiddleware(mux))
+	err := http.ListenAndServe(addr, common.CorsMiddleware(mux))
 	if err != nil {
 		log.Fatal(err)
 	}
