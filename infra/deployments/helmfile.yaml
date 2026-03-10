@@ -1,4 +1,11 @@
-repositories: []
+environments:
+  dev:
+    values:
+      - env/dev.yaml
+
+  production:
+    values:
+      - env/production.yaml
 
 releases:
 
@@ -6,34 +13,40 @@ releases:
     namespace: interest
     chart: ./chart
     values:
+      - {{ toYaml .Environment.Values | nindent 8 }}
       - ../../backend/interest/helm.values.yaml
 
   - name: education
     namespace: education
     chart: ./chart
     values:
+      - {{ toYaml .Environment.Values | nindent 8 }}
       - ../../backend/education/helm.values.yaml
 
   - name: qrcode
     namespace: qrcode
     chart: ./chart
     values:
+      - {{ toYaml .Environment.Values | nindent 8 }}
       - ../../backend/qrcode/helm.values.yaml
 
   - name: identity
     namespace: identity
     chart: ./chart
     values:
+      - {{ toYaml .Environment.Values | nindent 8 }}
       - ../../backend/identity/helm.values.yaml
 
   - name: experience
     namespace: experience
     chart: ./chart
     values:
+      - {{ toYaml .Environment.Values | nindent 8 }}
       - ../../backend/experience/helm.values.yaml
 
   - name: frontend
     namespace: frontend
     chart: ./chart
     values:
+      - {{ toYaml .Environment.Values | nindent 8 }}
       - ../../frontend/helm.values.yaml

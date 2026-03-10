@@ -1,0 +1,16 @@
+---
+# Source: basic-app/templates/config-runtime.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-runtime-config
+data:
+  config.js: |
+    window.RUNTIME_CONFIG = {
+      EXPERIENCE_SERVICE_URL: "http://experience.localhost/experience",
+      EDUCATION_SERVICE_URL: "http://education.localhost/education",
+      INTEREST_SERVICE_URL: "http://interest.localhost/interest",
+      IDENTITY_SERVICE_URL: "http://identity.localhost/identity",
+      QRCODE_SERVICE_URL: "http://qrcode.localhost/qrcode",
+      NOOP_SERVICE_URL: "http://localhost/noop"
+    }

@@ -1,0 +1,19 @@
+---
+# Source: basic-app/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: interest
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: interest.dansysadm.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: interest
+                port:
+                  number: 8080
