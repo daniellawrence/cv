@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: "dansysadm.com/images/{{ .Release.Name }}:{{ default "latest" .Values.image.tag }}"
+          image: "{{ .Values.image.repo }}/{{ .Release.Name }}:{{ default "latest" .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.service.port }}
@@ -35,7 +35,19 @@ spec:
               mountPath: /usr/share/nginx/html/config.js
               subPath: config.js
 {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.service.port }}
+            failureThreshold: 1
+            periodSeconds: 10
 
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: {{ .Values.service.port }}
+            failureThreshold: 30
+            periodSeconds: 10
 {{- if .Values.frontendruntimeconfig.enabled }}
       volumes:
         - name: runtime-config

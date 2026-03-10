@@ -19,7 +19,7 @@ fi
     --helm-binary ${PWD}/bin/helm \
     --file infra/deployments/helmfile.yaml \
     template \
-    --output-dir-template "artifacts/${ENVIRONMENT}/{{ .Release.Name }}/"
+    --output-dir-template "artifacts/${ENVIRONMENT}/{{ .Release.Name }}/" 
 
 ./bin/helmfile  \
     --environment ${ENVIRONMENT} \

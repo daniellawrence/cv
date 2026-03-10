@@ -31,6 +31,19 @@ spec:
             - name: runtime-config
               mountPath: /usr/share/nginx/html/config.js
               subPath: config.js
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            failureThreshold: 1
+            periodSeconds: 10
+
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            failureThreshold: 30
+            periodSeconds: 10
       volumes:
         - name: runtime-config
           configMap:
