@@ -5,4 +5,9 @@ cd $GIT_ROOT
 ./bin/helmfile  \
     --helm-binary ${PWD}/bin/helm \
     --file infra/deployments/helmfile.yaml \
+    delete
+
+./bin/helmfile  \
+    --helm-binary ${PWD}/bin/helm \
+    --file infra/deployments/helmfile.yaml \
     sync

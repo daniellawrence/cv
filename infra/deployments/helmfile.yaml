@@ -31,3 +31,9 @@ releases:
     chart: ./chart
     values:
       - ../../backend/experience/helm.values.yaml
+
+  - name: frontend
+    namespace: frontend
+    chart: ./chart
+    values:
+      - ../../frontend/helm.values.yaml

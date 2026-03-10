@@ -23,5 +23,9 @@ spec:
           env:
             - name: SERVICE_PORT
               value: "{{ .Values.service.port }}"
+              {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+              {{- end }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
