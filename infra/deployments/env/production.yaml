@@ -5,3 +5,4 @@ ingress:
   enabled: true
   className: traefik
   domain: dansysadm.com
+  schema: https

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: "dansysadm.com/images/{{ .Release.Name }}:latest"
+          image: "dansysadm.com/images/{{ .Release.Name }}:{{ default "latest" .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.service.port }}

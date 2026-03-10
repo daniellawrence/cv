@@ -7,10 +7,10 @@ metadata:
 data:
   config.js: |
     window.RUNTIME_CONFIG = {
-      EXPERIENCE_SERVICE_URL: "http://experience.dansysadm.com/experience",
-      EDUCATION_SERVICE_URL: "http://education.dansysadm.com/education",
-      INTEREST_SERVICE_URL: "http://interest.dansysadm.com/interest",
-      IDENTITY_SERVICE_URL: "http://identity.dansysadm.com/identity",
-      QRCODE_SERVICE_URL: "http://qrcode.dansysadm.com/qrcode",
+      EXPERIENCE_SERVICE_URL: "https://experience.dansysadm.com/experience",
+      EDUCATION_SERVICE_URL: "https://education.dansysadm.com/education",
+      INTEREST_SERVICE_URL: "https://interest.dansysadm.com/interest",
+      IDENTITY_SERVICE_URL: "https://identity.dansysadm.com/identity",
+      QRCODE_SERVICE_URL: "https://qrcode.dansysadm.com/qrcode",
       NOOP_SERVICE_URL: "http://localhost/noop"
     }

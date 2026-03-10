@@ -7,10 +7,10 @@ metadata:
 data:
   config.js: |
     window.RUNTIME_CONFIG = {
-      EXPERIENCE_SERVICE_URL: "http://experience.localhost/experience",
-      EDUCATION_SERVICE_URL: "http://education.localhost/education",
-      INTEREST_SERVICE_URL: "http://interest.localhost/interest",
-      IDENTITY_SERVICE_URL: "http://identity.localhost/identity",
-      QRCODE_SERVICE_URL: "http://qrcode.localhost/qrcode",
+      EXPERIENCE_SERVICE_URL: "://experience.localhost/experience",
+      EDUCATION_SERVICE_URL: "://education.localhost/education",
+      INTEREST_SERVICE_URL: "://interest.localhost/interest",
+      IDENTITY_SERVICE_URL: "://identity.localhost/identity",
+      QRCODE_SERVICE_URL: "://qrcode.localhost/qrcode",
       NOOP_SERVICE_URL: "http://localhost/noop"
     }
