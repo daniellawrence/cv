@@ -22,17 +22,16 @@ var interests = []*interestv1.Interest{
 	},
 	{
 		Id:   "skills",
-		Type: "Languages/Skills",
+		Type: "Languages",
 		Names: []string{
-			"Site Reliability Engineering",
-			"Observability Architecture",
-			"Continuous Deployment",
-			"Developer Tooling",
+			"go",
+			"python",
+			"ai-skills + workflows",
 		},
 	},
 	{
 		Id:   "hobbies",
-		Type: "hobbies",
+		Type: "Hobbies",
 		Names: []string{
 			"3D printing / All things maker",
 			"Home Automation",
