@@ -8,15 +8,15 @@ export default function QRcode({ encode_url }: { encode_url: string }) {
     fetchQrcode({ encode_url }).then(setQrcode)
   }, [encode_url])
 
-  if (!qrcode) {
-    return <div>Loading...</div>
-  }
-
   return (
     <>
       <div className="qr-code" id="qrcode">
         <a href={encode_url}>
-          <img src={`data:image/png;base64,${qrcode.imageBase64}`} width={150} height={150} />          
+          {qrcode ? (
+          <img src={`data:image/png;base64,${qrcode.imageBase64}`} width={150} height={150} />
+          ) : (
+            <img width={150} height={150} />
+          )}
           <small>{encode_url}</small>
         </a>
       </div>

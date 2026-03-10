@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { fetchInterest, type Interest } from "../services/interest"
 
-export default function InterestList({ id }: { id: string }) {
+export function InterestList({ id }: { id: string }) {
   const [interest, setInterest] = useState<Interest | null>(null)
 
   useEffect(() => {
@@ -27,5 +27,18 @@ export default function InterestList({ id }: { id: string }) {
            
 
 
+  )
+}
+
+
+
+export default function Interest() {
+  return (
+    <section>
+      <div className="section-title">Talk to me about</div>
+      <InterestList id="tech" />
+      <InterestList id="skills" />
+      <InterestList id="hobbies" />
+    </section>
   )
 }
