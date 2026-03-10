@@ -17,7 +17,6 @@ export default function QRcode({ encode_url }: { encode_url: string }) {
           ) : (
             <img width={150} height={150} />
           )}
-          <small>{encode_url}</small>
         </a>
       </div>
     </>
