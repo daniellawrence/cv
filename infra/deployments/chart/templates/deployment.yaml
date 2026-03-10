@@ -29,3 +29,16 @@ spec:
               {{- end }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
+{{- if .Values.frontendruntimeconfig.enabled }}
+          volumeMounts:
+            - name: runtime-config
+              mountPath: /usr/share/nginx/html/config.js
+              subPath: config.js
+{{- end }}
+
+{{- if .Values.frontendruntimeconfig.enabled }}
+      volumes:
+        - name: runtime-config
+          configMap:
+            name: frontend-runtime-config
+{{- end }}

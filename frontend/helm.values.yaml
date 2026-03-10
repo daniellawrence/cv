@@ -1,6 +1,8 @@
-env:
-  EXPERIENCE_SERVICE_URL: "http://experience.localhost/experience"
-  EDUCATION_SERVICE_URL: "http://education.localhost/education"
-  INTEREST_SERVICE_URL: "http://interest.localhost/interest"
-  IDENTITY_SERVICE_URL: "http://identity.localhost/identity"
-  QRCODE_SERVICE_URL: "http://qrcode.localhost/qrcode"
+frontendruntimeconfig:
+  enabled: true
+  map:
+    EXPERIENCE_SERVICE_URL: "http://experience.localhost/experience"
+    EDUCATION_SERVICE_URL: "http://education.localhost/education"
+    INTEREST_SERVICE_URL: "http://interest.localhost/interest"
+    IDENTITY_SERVICE_URL: "http://identity.localhost/identity"
+    QRCODE_SERVICE_URL: "http://qrcode.localhost/qrcode"
