@@ -11,6 +11,7 @@ function backend_content_sha() {
     BACKEND_SHA1=$(
         (
             find backend/${SERVICE_NAME}/ -type f -exec cat {} \;
+            find backend/common -type f -exec cat {} \;
             find gen/go -type f -exec cat {} \; 
         ) | sha1sum | cut -d' ' -f1)
     echo $BACKEND_SHA1
