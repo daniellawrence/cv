@@ -21,4 +21,9 @@ fi
     --file infra/deployments/helmfile.yaml \
     sync
 
-# kubectl rollout restart deployment -n interest
+./bin/kubectl rollout restart deployment -n education
+./bin/kubectl rollout restart deployment -n experience
+./bin/kubectl rollout restart deployment -n identity
+./bin/kubectl rollout restart deployment -n interest
+./bin/kubectl rollout restart deployment -n qrcode
+./bin/kubectl rollout restart deployment -n frontend

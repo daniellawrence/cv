@@ -1,11 +1,12 @@
 import { fromJson, type MessageShape } from "@bufbuild/protobuf"
 import { EducationSchema } from "@cv/proto/education/v1/education_pb"
 import { ServiceEndpoints } from "./endpoints"
+import { tracedFetch } from "./tracing"
 
 export type Education = MessageShape<typeof EducationSchema>
 
 export async function fetchEducation(): Promise<Education[]> {
-    const res = await fetch(ServiceEndpoints.education)
+    const res = await tracedFetch(ServiceEndpoints.education)
 
     if (!res.ok) {
         throw new Error(`Failed to fetch education`)

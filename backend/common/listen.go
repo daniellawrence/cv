@@ -29,7 +29,11 @@ func Listen(mux *http.ServeMux) error {
 
 	zPages(mux)
 
-	handler := otelhttp.NewHandler(mux, "http-server")
+	handler := otelhttp.NewHandler(mux, "http-server",
+		otelhttp.WithFilter(func(r *http.Request) bool {
+			return r.URL.Path != "/healthz"
+		}),
+	)
 
 	addr := GetListenAddr()
 	log.Printf("Starting server on %s\n", addr)

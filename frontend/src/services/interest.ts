@@ -1,12 +1,13 @@
 import { fromJson, type MessageShape } from "@bufbuild/protobuf"
 import { InterestSchema } from "@cv/proto/interest/v1/interest_pb"
-import { ServiceEndpoints } from "./endpoints";
+import { ServiceEndpoints } from "./endpoints"
+import { tracedFetch } from "./tracing"
 
 export type Interest = MessageShape<typeof InterestSchema>
 
 export async function fetchInterest({ id }: { id: string }): Promise<Interest> {
     const url = `${ServiceEndpoints.interest}/${id}`
-    const res = await fetch(url)
+    const res = await tracedFetch(url)
 
     if (!res.ok) {
         throw new Error(`Failed to fetch interest`)
