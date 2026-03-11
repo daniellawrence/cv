@@ -5,7 +5,8 @@ import { ServiceEndpoints } from "./endpoints";
 export type Experience = MessageShape<typeof ExperienceSchema>
 
 export async function fetchExperience({ limit, offset }: { limit: number; offset: number }): Promise<Experience[]> {
-    const res = await fetch(ServiceEndpoints.experience)
+    const url = `${ServiceEndpoints.experience}/${offset}/${limit}`
+    const res = await fetch(url)
 
     if (!res.ok) {
         throw new Error(`Failed to fetch experience`)

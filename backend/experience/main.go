@@ -10,6 +10,19 @@ import (
 )
 
 func listExperience(w http.ResponseWriter, r *http.Request) {
+	offset := common.GetPathInt(r, "offset", 0)
+	limit := common.GetPathInt(r, "limit", 4)
+
+	page := experiences
+	if offset < len(page) {
+		page = page[offset:]
+	} else {
+		page = nil
+	}
+	if limit < len(page) {
+		page = page[:limit]
+	}
+
 	m := protojson.MarshalOptions{
 		UseProtoNames:   false,
 		EmitUnpopulated: true,
@@ -18,7 +31,7 @@ func listExperience(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	data, err := m.Marshal(&experiencev1.ListExperienceResponse{
-		Experience: experiences,
+		Experience: page,
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -35,5 +48,6 @@ func listExperience(w http.ResponseWriter, r *http.Request) {
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/experience", listExperience)
+	mux.HandleFunc("/experience/{offset}/{limit}", listExperience)
 	common.Listen(mux)
 }
