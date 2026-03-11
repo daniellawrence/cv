@@ -12,5 +12,6 @@ data:
       INTEREST_SERVICE_URL: "https://interest.dansysadm.com/interest",
       IDENTITY_SERVICE_URL: "https://identity.dansysadm.com/identity",
       QRCODE_SERVICE_URL: "https://qrcode.dansysadm.com/qrcode",
-      OTEL_EXPORTER_OTLP_ENDPOINT:  "https://tracing.dansysadm.com/v1/traces"
+      OTEL_EXPORTER_OTLP_ENDPOINT:  "https://tracing.dansysadm.com/v1/traces",
+      JAEGER_QUERY_URL:  "https://tracing.dansysadm.com/"
     }

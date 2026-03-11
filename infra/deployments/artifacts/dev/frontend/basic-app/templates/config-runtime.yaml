@@ -12,5 +12,6 @@ data:
       INTEREST_SERVICE_URL: "http://interest.localhost/interest",
       IDENTITY_SERVICE_URL: "http://identity.localhost/identity",
       QRCODE_SERVICE_URL: "http://qrcode.localhost/qrcode",
-      OTEL_EXPORTER_OTLP_ENDPOINT:  "http://tracing.localhost/v1/traces"
+      OTEL_EXPORTER_OTLP_ENDPOINT:  "http://tracing.localhost/v1/traces",
+      JAEGER_QUERY_URL:  "http://tracing.localhost/"
     }
