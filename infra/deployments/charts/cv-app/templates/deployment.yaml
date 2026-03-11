@@ -4,6 +4,7 @@ metadata:
   name: {{ .Release.Name }}
   labels:
     app: {{ .Release.Name }}
+    deploy-timestamp: "{{ now | unixEpoch }}"
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -13,6 +14,7 @@ spec:
     metadata:
       labels:
         app: {{ .Release.Name }}
+        deploy-timestamp: "{{ now | unixEpoch }}"
     spec:
       containers:
         - name: app
@@ -27,6 +29,10 @@ spec:
             - name: {{ $key }}
               value: {{ $value | quote }}
               {{- end }}
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://jaeger-collector.jaeger:4317
+            - name: OTEL_SERVICE_NAME
+              value: {{ .Release.Name }}-backend
           resources:
 {{ toYaml .Values.resources | indent 12 }}
 {{- if .Values.frontendruntimeconfig.enabled }}

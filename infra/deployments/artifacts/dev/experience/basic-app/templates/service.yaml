@@ -4,6 +4,9 @@ apiVersion: v1
 kind: Service
 metadata:
   name: experience
+  labels:
+    app: experience
+    deploy-timestamp: "1773208329"
 spec:
   type: ClusterIP
   selector:

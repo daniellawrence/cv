@@ -6,6 +6,7 @@ metadata:
   name: frontend
   labels:
     app: frontend
+    deploy-timestamp: "1773208329"
 spec:
   replicas: 1
   selector:
@@ -15,16 +16,21 @@ spec:
     metadata:
       labels:
         app: frontend
+        deploy-timestamp: "1773208329"
     spec:
       containers:
         - name: app
-          image: "dansysadm.com/images/frontend:latest"
-          imagePullPolicy: IfNotPresent
+          image: "dansysadm.com/images/frontend:96aad1b813ef1377c1c2cf74af33c1249d5683bb"
+          imagePullPolicy: Never
           ports:
             - containerPort: 8080
           env:
             - name: SERVICE_PORT
               value: "8080"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://jaeger-collector.jaeger:4317
+            - name: OTEL_SERVICE_NAME
+              value: frontend-backend
           resources:
             null
           volumeMounts:

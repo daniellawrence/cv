@@ -61,4 +61,5 @@ releases:
     chart: jaegertracing/jaeger
     version: 0.71.0
     values:
-      - ../jaeger/values.yaml
+      - {{ toYaml .Environment.Values | nindent 8 }}
+      - ../jaeger/values.yaml.gotmpl

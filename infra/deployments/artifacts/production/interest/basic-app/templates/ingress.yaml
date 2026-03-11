@@ -4,6 +4,9 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: interest
+  labels:
+    app: interest
+    deploy-timestamp: "1773208556"
 spec:
   ingressClassName: traefik
   rules:

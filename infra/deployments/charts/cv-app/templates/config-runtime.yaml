@@ -3,12 +3,15 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: frontend-runtime-config
+  labels:
+    app: {{ .Release.Name }}
+    deploy-timestamp: "{{ now | unixEpoch }}"
 data:
   config.js: |
     window.RUNTIME_CONFIG = {
       {{- range .Values.frontendruntimeconfig.services }}
       {{ . | upper }}_SERVICE_URL: "{{ $.Values.ingress.schema }}://{{ . }}.{{ $.Values.ingress.domain }}/{{ . }}",
       {{- end }}
-      NOOP_SERVICE_URL: "http://localhost/noop"
+      OTEL_EXPORTER_OTLP_ENDPOINT:  "{{ $.Values.ingress.schema }}://jaeger-collector.{{ $.Values.ingress.domain }}/v1/traces"
     }
 {{- end }}

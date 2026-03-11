@@ -4,6 +4,9 @@ apiVersion: v1
 kind: Service
 metadata:
   name: education
+  labels:
+    app: education
+    deploy-timestamp: "1773208556"
 spec:
   type: ClusterIP
   selector:

@@ -1,0 +1,87 @@
+provisionDataStore:
+  cassandra: false
+  elasticsearch: false
+  kafka: false
+
+allInOne:
+  enabled: true
+  extraEnv:
+    - name: COLLECTOR_OTLP_HTTP_CORS_ALLOWED_ORIGINS
+      value: "*"
+    - name: COLLECTOR_OTLP_HTTP_CORS_ALLOWED_HEADERS
+      value: "Content-Type,traceparent,tracestate"
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    hosts:
+      - tracing.{{ .Values.ingress.domain }}
+    path: /
+    pathType: Prefix
+
+extraObjects:
+  - apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: jaeger-collector-otlp-http
+      namespace: jaeger
+      annotations:
+        traefik.ingress.kubernetes.io/router.middlewares: jaeger-otlp-cors@kubernetescrd
+    spec:
+      ingressClassName: traefik
+      rules:
+      - host: tracing.{{ .Values.ingress.domain }}
+        http:
+          paths:
+          - backend:
+              service:
+                name: jaeger-collector
+                port:
+                  number: 4318
+            path: /v1/traces
+            pathType: Prefix
+  - apiVersion: traefik.io/v1alpha1
+    kind: Middleware
+    metadata:
+      name: otlp-cors
+      namespace: jaeger
+    spec:
+      headers:
+        accessControlAllowCredentials: true
+        accessControlAllowHeaders:
+        - 'Content-Type'
+        - 'traceparent'
+        - 'tracestate'
+        accessControlAllowMethods:
+        - POST
+        - OPTIONS
+        accessControlAllowOriginList:
+        - '{{ .Values.ingress.schema }}://{{ .Values.ingress.domain }}'
+        accessControlMaxAge: 86400
+
+
+storage:
+  type: memory
+
+agent:
+  enabled: false
+
+collector:
+  enabled: false
+
+query:
+  enabled: false
+
+
+provisionDataStore:
+  cassandra: false
+  elasticsearch: false
+
+# Disable extra features
+spark:
+  enabled: false
+
+esIndexCleaner:
+  enabled: false
+
+esRollover:
+  enabled: false

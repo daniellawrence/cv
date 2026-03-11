@@ -6,6 +6,7 @@ metadata:
   name: experience
   labels:
     app: experience
+    deploy-timestamp: "1773208329"
 spec:
   replicas: 1
   selector:
@@ -15,16 +16,21 @@ spec:
     metadata:
       labels:
         app: experience
+        deploy-timestamp: "1773208329"
     spec:
       containers:
         - name: app
-          image: "dansysadm.com/images/experience:latest"
-          imagePullPolicy: IfNotPresent
+          image: "dansysadm.com/images/experience:cb598d900f5039eb2c52c597ff12b16f9a38a6a3"
+          imagePullPolicy: Never
           ports:
             - containerPort: 8080
           env:
             - name: SERVICE_PORT
               value: "8080"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://jaeger-collector.jaeger:4317
+            - name: OTEL_SERVICE_NAME
+              value: experience-backend
           resources:
             null
           livenessProbe:

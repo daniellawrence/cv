@@ -6,6 +6,7 @@ metadata:
   name: education
   labels:
     app: education
+    deploy-timestamp: "1773208329"
 spec:
   replicas: 1
   selector:
@@ -15,16 +16,21 @@ spec:
     metadata:
       labels:
         app: education
+        deploy-timestamp: "1773208329"
     spec:
       containers:
         - name: app
-          image: "dansysadm.com/images/education:latest"
-          imagePullPolicy: IfNotPresent
+          image: "dansysadm.com/images/education:17a312fd1c2b8c654be57680c99b1860d0f5e56b"
+          imagePullPolicy: Never
           ports:
             - containerPort: 8080
           env:
             - name: SERVICE_PORT
               value: "8080"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://jaeger-collector.jaeger:4317
+            - name: OTEL_SERVICE_NAME
+              value: education-backend
           resources:
             null
           livenessProbe:

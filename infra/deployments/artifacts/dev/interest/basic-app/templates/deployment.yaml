@@ -6,6 +6,7 @@ metadata:
   name: interest
   labels:
     app: interest
+    deploy-timestamp: "1773208329"
 spec:
   replicas: 1
   selector:
@@ -15,16 +16,21 @@ spec:
     metadata:
       labels:
         app: interest
+        deploy-timestamp: "1773208329"
     spec:
       containers:
         - name: app
-          image: "dansysadm.com/images/interest:latest"
-          imagePullPolicy: IfNotPresent
+          image: "dansysadm.com/images/interest:21c7c7748357b81a96bd89da216ab6c16da86637"
+          imagePullPolicy: Never
           ports:
             - containerPort: 8080
           env:
             - name: SERVICE_PORT
               value: "8080"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://jaeger-collector.jaeger:4317
+            - name: OTEL_SERVICE_NAME
+              value: interest-backend
           resources:
             null
           livenessProbe:
