@@ -1,3 +1,7 @@
+repositories:
+  - name: jaegertracing
+    url: https://jaegertracing.github.io/helm-charts
+
 environments:
   dev:
     values:
@@ -11,42 +15,50 @@ releases:
 
   - name: interest
     namespace: interest
-    chart: ./chart
+    chart: ./charts/cv-app
     values:
       - {{ toYaml .Environment.Values | nindent 8 }}
       - ../../backend/interest/helm.values.yaml
 
   - name: education
     namespace: education
-    chart: ./chart
+    chart: ./charts/cv-app
     values:
       - {{ toYaml .Environment.Values | nindent 8 }}
       - ../../backend/education/helm.values.yaml
 
   - name: qrcode
     namespace: qrcode
-    chart: ./chart
+    chart: ./charts/cv-app
     values:
       - {{ toYaml .Environment.Values | nindent 8 }}
       - ../../backend/qrcode/helm.values.yaml
 
   - name: identity
     namespace: identity
-    chart: ./chart
+    chart: ./charts/cv-app
     values:
       - {{ toYaml .Environment.Values | nindent 8 }}
       - ../../backend/identity/helm.values.yaml
 
   - name: experience
     namespace: experience
-    chart: ./chart
+    chart: ./charts/cv-app
     values:
       - {{ toYaml .Environment.Values | nindent 8 }}
       - ../../backend/experience/helm.values.yaml
 
   - name: frontend
     namespace: frontend
-    chart: ./chart
+    chart: ./charts/cv-app
     values:
       - {{ toYaml .Environment.Values | nindent 8 }}
       - ../../frontend/helm.values.yaml
+
+  - name: jaeger
+    namespace: jaeger
+    createNamespace: true
+    chart: jaegertracing/jaeger
+    version: 0.71.0
+    values:
+      - ../jaeger/values.yaml

@@ -1,0 +1,26 @@
+---
+# Source: jaeger/templates/allinone-ing.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jaeger-query
+  labels:
+    helm.sh/chart: jaeger-0.71.0
+    app.kubernetes.io/name: jaeger
+    app.kubernetes.io/instance: jaeger
+    app.kubernetes.io/version: "1.45.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: all-in-one
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: tracing.localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: jaeger-query
+                port:
+                  number: 16686

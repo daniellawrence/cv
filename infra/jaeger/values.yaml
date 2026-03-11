@@ -1,0 +1,42 @@
+provisionDataStore:
+  cassandra: false
+  elasticsearch: false
+  kafka: false
+
+allInOne:
+  enabled: true
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    hosts:
+      - tracing.localhost
+    path: /
+    pathType: Prefix
+
+
+storage:
+  type: memory
+
+agent:
+  enabled: false
+
+collector:
+  enabled: false
+
+query:
+  enabled: false
+
+
+provisionDataStore:
+  cassandra: false
+  elasticsearch: false
+
+# Disable extra features
+spark:
+  enabled: false
+
+esIndexCleaner:
+  enabled: false
+
+esRollover:
+  enabled: false
