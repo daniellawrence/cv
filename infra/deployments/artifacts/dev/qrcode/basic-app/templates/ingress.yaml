@@ -4,9 +4,6 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: qrcode
-  labels:
-    app: qrcode
-    deploy-timestamp: "1773208329"
 spec:
   ingressClassName: traefik
   rules:

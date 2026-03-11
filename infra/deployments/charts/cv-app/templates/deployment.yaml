@@ -4,7 +4,6 @@ metadata:
   name: {{ .Release.Name }}
   labels:
     app: {{ .Release.Name }}
-    deploy-timestamp: "{{ now | unixEpoch }}"
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -14,7 +13,6 @@ spec:
     metadata:
       labels:
         app: {{ .Release.Name }}
-        deploy-timestamp: "{{ now | unixEpoch }}"
     spec:
       containers:
         - name: app

@@ -6,7 +6,6 @@ metadata:
   name: experience
   labels:
     app: experience
-    deploy-timestamp: "1773208329"
 spec:
   replicas: 1
   selector:
@@ -16,11 +15,10 @@ spec:
     metadata:
       labels:
         app: experience
-        deploy-timestamp: "1773208329"
     spec:
       containers:
         - name: app
-          image: "dansysadm.com/images/experience:cb598d900f5039eb2c52c597ff12b16f9a38a6a3"
+          image: "dansysadm.com/images/experience:latest"
           imagePullPolicy: Never
           ports:
             - containerPort: 8080

@@ -6,7 +6,6 @@ metadata:
   name: education
   labels:
     app: education
-    deploy-timestamp: "1773208556"
 spec:
   replicas: 1
   selector:
@@ -16,7 +15,6 @@ spec:
     metadata:
       labels:
         app: education
-        deploy-timestamp: "1773208556"
     spec:
       containers:
         - name: app

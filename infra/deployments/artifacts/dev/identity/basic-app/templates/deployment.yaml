@@ -6,7 +6,6 @@ metadata:
   name: identity
   labels:
     app: identity
-    deploy-timestamp: "1773208329"
 spec:
   replicas: 1
   selector:
@@ -16,11 +15,10 @@ spec:
     metadata:
       labels:
         app: identity
-        deploy-timestamp: "1773208329"
     spec:
       containers:
         - name: app
-          image: "dansysadm.com/images/identity:885d7eae77d78c36f92074d848d8e8805f476e37"
+          image: "dansysadm.com/images/identity:latest"
           imagePullPolicy: Never
           ports:
             - containerPort: 8080

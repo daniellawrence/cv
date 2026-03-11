@@ -6,7 +6,6 @@ metadata:
   name: qrcode
   labels:
     app: qrcode
-    deploy-timestamp: "1773208329"
 spec:
   replicas: 1
   selector:
@@ -16,11 +15,10 @@ spec:
     metadata:
       labels:
         app: qrcode
-        deploy-timestamp: "1773208329"
     spec:
       containers:
         - name: app
-          image: "dansysadm.com/images/qrcode:facda8008011f7df63a663818f3d20681ccd0c6c"
+          image: "dansysadm.com/images/qrcode:latest"
           imagePullPolicy: Never
           ports:
             - containerPort: 8080
