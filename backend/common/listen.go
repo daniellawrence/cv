@@ -1,8 +1,11 @@
 package common
 
 import (
+	"context"
 	"log"
 	"net/http"
+
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 )
 
 func healthz(w http.ResponseWriter, r *http.Request) {
@@ -21,12 +24,17 @@ func zPages(mux *http.ServeMux) {
 
 func Listen(mux *http.ServeMux) error {
 
+	shutdown := InitTracing()
+	defer shutdown(context.Background())
+
 	zPages(mux)
+
+	handler := otelhttp.NewHandler(mux, "http-server")
 
 	addr := GetListenAddr()
 	log.Printf("Starting server on %s\n", addr)
 
-	err := http.ListenAndServe(addr, CorsMiddleware(mux))
+	err := http.ListenAndServe(addr, CorsMiddleware(handler))
 	if err != nil {
 		log.Fatal(err)
 		return err

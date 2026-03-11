@@ -1,6 +1,6 @@
 module github.com/daniellawrence/cv/backend/qrcode
 
-go 1.23
+go 1.25
 
 require (
 	github.com/yeqown/go-qrcode/v2 v2.2.5
