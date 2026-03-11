@@ -299,5 +299,13 @@ body {
         width: 210mm;
         height: 297mm;
         margin: 0;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .trace-trigger,
+    .trace-panel,
+    .trace-service-graph,
+    .geometric-background {
+        display: none !important;
     }
 }

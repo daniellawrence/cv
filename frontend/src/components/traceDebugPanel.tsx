@@ -96,7 +96,7 @@ function ServiceGraph({ trace }: { trace: JaegerTrace }) {
   const { pos, svgW, svgH } = layoutGraph(nodes, edges)
 
   return (
-    <div style={{
+    <div className="trace-service-graph" style={{
       position: "fixed", left: 12, top: "50%", transform: "translateY(-50%)",
       zIndex: 9998,
       background: "rgba(15,23,42,0.97)",
@@ -278,7 +278,7 @@ export default function TraceDebugPanel() {
 
       {/* Detail panel overlay */}
       {panelOpen && (
-        <div style={{
+        <div className="trace-panel" style={{
           position: "fixed", bottom: 12, right: 12, zIndex: 9999,
           background: "rgba(15,23,42,0.97)", color: "#e2e8f0",
           border: "1px solid #334155", borderRadius: 8,

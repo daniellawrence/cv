@@ -20,10 +20,18 @@ provider.register({
   contextManager: new StackContextManager(),
 })
 
+const backendOrigins = [...new Set([
+  ServiceEndpoints.experience,
+  ServiceEndpoints.education,
+  ServiceEndpoints.interest,
+  ServiceEndpoints.identity,
+  ServiceEndpoints.qrcode,
+].map((url) => new URL(url).origin))]
+
 registerInstrumentations({
   instrumentations: [
     new FetchInstrumentation({
-      propagateTraceHeaderCorsUrls: [/localhost/],
+      propagateTraceHeaderCorsUrls: backendOrigins.map((origin) => new RegExp(`^${origin.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`)),
     }),
   ],
 })

@@ -40,6 +40,7 @@ export default function GeometricBackground() {
 
   return (
     <div
+      className="geometric-background"
       style={{
         position: "fixed",
         inset: 0,
