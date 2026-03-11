@@ -7,8 +7,9 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
     color: #1a1a1a;
-    background: #ffffff;
+    background: #e0e0e0;
     line-height: 1.4;
+    padding: 10mm;
 }
 
 .container {
@@ -189,6 +190,19 @@ body {
     font-size: 8.5pt;
     margin: 2mm 0 1mm 0;
     color: #1a1a1a;
+}
+
+@media (max-width: 870px) {
+    body {
+        background: #ffffff;
+        padding: 0;
+    }
+
+    .container {
+        width: 100%;
+        height: auto;
+        box-shadow: none;
+    }
 }
 
 @media print {
