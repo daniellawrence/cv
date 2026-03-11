@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, useRef } from "react"
 import { getTraceId } from "../services/tracing"
 import { ServiceEndpoints } from "../services/endpoints"
 
@@ -38,11 +38,12 @@ function hasError(span: JaegerSpan): boolean {
 }
 
 export default function TraceDebugPanel() {
-  const [visible, setVisible] = useState(false)
+  const [panelOpen, setPanelOpen] = useState(false)
   const [trace, setTrace] = useState<JaegerTrace | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [lastFetch, setLastFetch] = useState<Date | null>(null)
+  const hasTrace = useRef(false)
   const traceId = getTraceId()
 
   const fetchTrace = useCallback(async () => {
@@ -53,7 +54,9 @@ export default function TraceDebugPanel() {
       const res = await fetch(url)
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
       const json: JaegerResponse = await res.json()
-      setTrace(json.data?.[0] ?? null)
+      const found = json.data?.[0] ?? null
+      setTrace(found)
+      if (found && found.spans.length >= 30) hasTrace.current = true
       setLastFetch(new Date())
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e))
@@ -62,37 +65,23 @@ export default function TraceDebugPanel() {
     }
   }, [traceId])
 
+  // Poll every second until traces are found
+  useEffect(() => {
+    fetchTrace()
+    const interval = setInterval(() => {
+      if (hasTrace.current) { clearInterval(interval); return }
+      fetchTrace()
+    }, 1000)
+    return () => clearInterval(interval)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === "d" && e.altKey) setVisible(v => !v)
+      if (e.key === "d" && e.altKey) setPanelOpen(v => !v)
     }
     window.addEventListener("keydown", handler)
     return () => window.removeEventListener("keydown", handler)
   }, [])
-
-  useEffect(() => {
-    if (visible && !trace) fetchTrace()
-  }, [visible, trace, fetchTrace])
-
-  if (!visible) {
-    return (
-      <button
-        onClick={() => setVisible(true)}
-        style={{
-          position: "fixed", bottom: 12, right: 12, zIndex: 9999,
-          background: "rgba(0,0,0,0.6)", color: "#7dd3fc",
-          border: "1px solid #0ea5e9", borderRadius: 6,
-          padding: "4px 10px", fontSize: 11, cursor: "pointer",
-          fontFamily: "monospace",
-        }}
-        title="Alt+D to toggle"
-      >
-        trace
-      </button>
-    )
-  }
-
-  const jaegerUiUrl = `${ServiceEndpoints.jaegerQuery}/trace/${traceId}`
 
   const spanRows = trace
     ? [...trace.spans].sort((a, b) => a.startTime - b.startTime)
@@ -107,115 +96,150 @@ export default function TraceDebugPanel() {
     ? [...new Set(Object.values(trace.processes).map(p => p.serviceName))]
     : []
 
+  const hasTraces = trace !== null && spanRows.length > 0
+  const hasErrors = spanRows.some(hasError)
+  const jaegerUiUrl = `${ServiceEndpoints.jaegerQuery}/trace/${traceId}`
+
   return (
-    <div style={{
-      position: "fixed", bottom: 12, right: 12, zIndex: 9999,
-      background: "rgba(15,23,42,0.96)", color: "#e2e8f0",
-      border: "1px solid #334155", borderRadius: 8,
-      fontFamily: "monospace", fontSize: 11,
-      width: 520, maxHeight: "80vh",
-      display: "flex", flexDirection: "column",
-      boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
-    }}>
-      {/* Header */}
-      <div style={{
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "8px 12px", borderBottom: "1px solid #334155",
-        background: "rgba(30,41,59,0.8)", borderRadius: "8px 8px 0 0",
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ color: "#7dd3fc", fontWeight: "bold" }}>trace debug</span>
-          {trace && (
-            <span style={{ color: "#64748b" }}>
-              {spanRows.length} spans · {services.join(", ")} · {formatDuration(totalDuration)}
+    <>
+      {/* Prominent trigger button — rendered in document flow below the CV card */}
+      <button
+        className={`trace-trigger${hasTraces ? " ready" : ""}`}
+        onClick={() => setPanelOpen(true)}
+        title="Alt+D to toggle"
+      >
+        <span className={`trace-dot${hasTraces ? " live" : ""}`} />
+        {loading && !trace && "fetching traces…"}
+        {!loading && !hasTraces && !error && "waiting for traces"}
+        {error && <span style={{ color: "#f87171" }}>trace unavailable</span>}
+        {hasTraces && (
+          <>
+            <span style={{ color: "#38bdf8", fontWeight: "bold" }}>
+              {spanRows.length} spans
             </span>
-          )}
-        </div>
-        <div style={{ display: "flex", gap: 6 }}>
-          <button onClick={fetchTrace} disabled={loading} style={{
-            background: "none", border: "1px solid #475569", color: "#94a3b8",
-            borderRadius: 4, padding: "2px 7px", cursor: "pointer", fontSize: 10,
-          }}>
-            {loading ? "…" : "refresh"}
-          </button>
-          <a href={jaegerUiUrl} target="_blank" rel="noreferrer" style={{
-            background: "none", border: "1px solid #475569", color: "#94a3b8",
-            borderRadius: 4, padding: "2px 7px", fontSize: 10, textDecoration: "none",
-          }}>
-            jaeger ↗
-          </a>
-          <button onClick={() => setVisible(false)} style={{
-            background: "none", border: "none", color: "#94a3b8",
-            cursor: "pointer", fontSize: 14, lineHeight: 1, padding: "0 2px",
-          }}>×</button>
-        </div>
-      </div>
-
-      {/* Trace ID */}
-      <div style={{ padding: "6px 12px", borderBottom: "1px solid #1e293b", color: "#64748b" }}>
-        <span style={{ color: "#475569" }}>id: </span>
-        <span style={{ color: "#a5b4fc" }}>{traceId}</span>
-        {lastFetch && (
-          <span style={{ color: "#334155", float: "right" }}>
-            {lastFetch.toLocaleTimeString()}
-          </span>
+            <span style={{ color: "#64748b" }}>·</span>
+            <span>{services.join(", ")}</span>
+            <span style={{ color: "#64748b" }}>·</span>
+            <span style={{ color: hasErrors ? "#f87171" : "#4ade80" }}>
+              {formatDuration(totalDuration)}
+            </span>
+            {hasErrors && <span style={{ color: "#f87171" }}>· errors</span>}
+          </>
         )}
-      </div>
+      </button>
 
-      {/* Error */}
-      {error && (
-        <div style={{ padding: "8px 12px", color: "#f87171", borderBottom: "1px solid #1e293b" }}>
-          {error}
+      {/* Detail panel overlay */}
+      {panelOpen && (
+        <div style={{
+          position: "fixed", bottom: 12, right: 12, zIndex: 9999,
+          background: "rgba(15,23,42,0.97)", color: "#e2e8f0",
+          border: "1px solid #334155", borderRadius: 8,
+          fontFamily: "monospace", fontSize: 11,
+          width: 540, maxHeight: "80vh",
+          display: "flex", flexDirection: "column",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.6)",
+        }}>
+          {/* Header */}
+          <div style={{
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            padding: "8px 12px", borderBottom: "1px solid #334155",
+            background: "rgba(30,41,59,0.9)", borderRadius: "8px 8px 0 0",
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ color: "#7dd3fc", fontWeight: "bold" }}>trace debug</span>
+              {trace && (
+                <span style={{ color: "#64748b" }}>
+                  {spanRows.length} spans · {services.join(", ")} · {formatDuration(totalDuration)}
+                </span>
+              )}
+            </div>
+            <div style={{ display: "flex", gap: 6 }}>
+              <button onClick={fetchTrace} disabled={loading} style={{
+                background: "none", border: "1px solid #475569", color: "#94a3b8",
+                borderRadius: 4, padding: "2px 7px", cursor: "pointer", fontSize: 10,
+              }}>
+                {loading ? "…" : "refresh"}
+              </button>
+              <a href={jaegerUiUrl} target="_blank" rel="noreferrer" style={{
+                background: "none", border: "1px solid #475569", color: "#94a3b8",
+                borderRadius: 4, padding: "2px 7px", fontSize: 10, textDecoration: "none",
+              }}>
+                jaeger ↗
+              </a>
+              <button onClick={() => setPanelOpen(false)} style={{
+                background: "none", border: "none", color: "#94a3b8",
+                cursor: "pointer", fontSize: 14, lineHeight: 1, padding: "0 2px",
+              }}>×</button>
+            </div>
+          </div>
+
+          {/* Trace ID */}
+          <div style={{ padding: "6px 12px", borderBottom: "1px solid #1e293b", color: "#64748b" }}>
+            <span style={{ color: "#475569" }}>id: </span>
+            <span style={{ color: "#a5b4fc" }}>{traceId}</span>
+            {lastFetch && (
+              <span style={{ color: "#334155", float: "right" }}>
+                {lastFetch.toLocaleTimeString()}
+              </span>
+            )}
+          </div>
+
+          {/* Error */}
+          {error && (
+            <div style={{ padding: "8px 12px", color: "#f87171", borderBottom: "1px solid #1e293b" }}>
+              {error}
+            </div>
+          )}
+
+          {/* Spans */}
+          <div style={{ overflowY: "auto", flex: 1 }}>
+            {spanRows.length === 0 && !loading && !error && (
+              <div style={{ padding: "16px 12px", color: "#475569", textAlign: "center" }}>
+                no spans yet — they may still be flushing
+              </div>
+            )}
+            {spanRows.map(span => {
+              const service = trace!.processes[span.processID]?.serviceName ?? span.processID
+              const err = hasError(span)
+              const httpStatus = span.tags.find(t => t.key === "http.status_code")?.value
+              const httpUrl = span.tags.find(t => t.key === "http.url")?.value as string | undefined
+              return (
+                <div key={span.spanID} style={{
+                  padding: "5px 12px",
+                  borderBottom: "1px solid #1e293b",
+                  borderLeft: `3px solid ${err ? "#ef4444" : "#334155"}`,
+                }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                    <span style={{ color: err ? "#f87171" : "#7dd3fc" }}>{span.operationName}</span>
+                    <span style={{ color: "#64748b" }}>{formatDuration(span.duration)}</span>
+                  </div>
+                  <div style={{ color: "#475569", marginTop: 2 }}>
+                    <span style={{ color: "#334155" }}>{service}</span>
+                    {httpStatus !== undefined && (
+                      <span style={{ marginLeft: 8, color: Number(httpStatus) >= 400 ? "#f87171" : "#4ade80" }}>
+                        HTTP {String(httpStatus)}
+                      </span>
+                    )}
+                    {httpUrl && (
+                      <span style={{
+                        marginLeft: 8, color: "#475569",
+                        overflow: "hidden", textOverflow: "ellipsis",
+                        display: "inline-block", maxWidth: 320, verticalAlign: "bottom",
+                        whiteSpace: "nowrap",
+                      }}>
+                        {httpUrl.replace(/^https?:\/\/[^/]+/, "")}
+                      </span>
+                    )}
+                    {err && span.warnings && (
+                      <span style={{ marginLeft: 8, color: "#fbbf24" }}>{span.warnings[0]}</span>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </div>
       )}
-
-      {/* Spans */}
-      <div style={{ overflowY: "auto", flex: 1 }}>
-        {spanRows.length === 0 && !loading && !error && (
-          <div style={{ padding: "16px 12px", color: "#475569", textAlign: "center" }}>
-            no spans yet — they may still be flushing
-          </div>
-        )}
-        {spanRows.map(span => {
-          const service = trace!.processes[span.processID]?.serviceName ?? span.processID
-          const err = hasError(span)
-          const httpStatus = span.tags.find(t => t.key === "http.status_code")?.value
-          const httpUrl = span.tags.find(t => t.key === "http.url")?.value as string | undefined
-          return (
-            <div key={span.spanID} style={{
-              padding: "5px 12px",
-              borderBottom: "1px solid #1e293b",
-              borderLeft: `3px solid ${err ? "#ef4444" : "#334155"}`,
-            }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                <span style={{ color: err ? "#f87171" : "#7dd3fc" }}>{span.operationName}</span>
-                <span style={{ color: "#64748b" }}>{formatDuration(span.duration)}</span>
-              </div>
-              <div style={{ color: "#475569", marginTop: 2 }}>
-                <span style={{ color: "#334155" }}>{service}</span>
-                {httpStatus !== undefined && (
-                  <span style={{ marginLeft: 8, color: Number(httpStatus) >= 400 ? "#f87171" : "#4ade80" }}>
-                    HTTP {String(httpStatus)}
-                  </span>
-                )}
-                {httpUrl && (
-                  <span style={{
-                    marginLeft: 8, color: "#475569",
-                    overflow: "hidden", textOverflow: "ellipsis",
-                    display: "inline-block", maxWidth: 300, verticalAlign: "bottom",
-                    whiteSpace: "nowrap",
-                  }}>
-                    {httpUrl.replace(/^https?:\/\/[^/]+/, "")}
-                  </span>
-                )}
-                {err && span.warnings && (
-                  <span style={{ marginLeft: 8, color: "#fbbf24" }}>{span.warnings[0]}</span>
-                )}
-              </div>
-            </div>
-          )
-        })}
-      </div>
-    </div>
+    </>
   )
 }

@@ -11,7 +11,6 @@ export default function App() {
   return (
     <>
         <GeometricBackground />
-        <TraceDebugPanel />
         <div className="container">
             <Header id="dsl" />
             
@@ -27,6 +26,7 @@ export default function App() {
                 <Interest />
             </div>
         </div>
+        <TraceDebugPanel />
     </>
   )
 }
