@@ -61,7 +61,7 @@ for SERVICE_DOCKERFILE in $(find backend -name Dockerfile);do
 done
 
 if [[ "${TARGET}" == "prod" ]];then
-    rsync -e ssh -avz dist/* root@dansysadm.com:/dist/
+    rsync -e ssh --delete -avz dist/* root@dansysadm.com:/dist/
     for IMAGE in $(cd ./dist && ls );do
         ssh root@dansysadm.com "cat /dist/${IMAGE} | gunzip | k3s ctr images import -"
     done
