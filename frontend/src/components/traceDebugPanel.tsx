@@ -186,6 +186,7 @@ export default function TraceDebugPanel() {
   const [error, setError] = useState<string | null>(null)
   const [lastFetch, setLastFetch] = useState<Date | null>(null)
   const hasTrace = useRef(false)
+  const fetchCount = useRef(0)
   const traceId = getTraceId()
 
   const fetchTrace = useCallback(async () => {
@@ -207,11 +208,13 @@ export default function TraceDebugPanel() {
     }
   }, [traceId])
 
-  // Poll every second until traces are found
+  // Poll every second until traces are found, up to 10 tries
   useEffect(() => {
+    fetchCount.current = 0
     fetchTrace()
     const interval = setInterval(() => {
-      if (hasTrace.current) { clearInterval(interval); return }
+      if (hasTrace.current || fetchCount.current >= 10) { clearInterval(interval); return }
+      fetchCount.current += 1
       fetchTrace()
     }, 1000)
     return () => clearInterval(interval)
