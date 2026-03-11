@@ -14,7 +14,13 @@ WORKDIR /workspace/backend/interest
 
 RUN go mod download
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o app .
+ARG CONTENT_SHA1=unknown
+ARG BUILD_TIMESTAMP=unknown
+
+RUN CGO_ENABLED=0 GOOS=linux go build \
+    -ldflags="-X 'github.com/daniellawrence/cv/backend/common.ContentSHA1=${CONTENT_SHA1}' \
+              -X 'github.com/daniellawrence/cv/backend/common.BuildTimestamp=${BUILD_TIMESTAMP}'" \
+    -o app .
 
 FROM scratch
 COPY --from=builder /workspace/backend/interest/app /app
