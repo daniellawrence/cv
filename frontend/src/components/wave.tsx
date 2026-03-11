@@ -3,11 +3,17 @@ import { useEffect, useState } from "react"
 
 export default function GeometricBackground() {
   const [t, setT] = useState(0)
+  const [opacity, setOpacity] = useState(0)
 
   useEffect(() => {
     let frame: number
+    const start = performance.now()
+    const delayMs = 600
+    const fadeMs = 1200
 
     const animate = () => {
+      const elapsed = performance.now() - start
+      setOpacity(Math.min(Math.max(elapsed - delayMs, 0) / fadeMs, 1))
       setT(v => v + 0.002)
       frame = requestAnimationFrame(animate)
     }
@@ -44,7 +50,7 @@ export default function GeometricBackground() {
       <svg
         viewBox="0 0 1440 900"
         preserveAspectRatio="none"
-        style={{ width: "100%", height: "100%" }}
+        style={{ width: "100%", height: "100%", opacity }}
       >
         <polygon fill="#1f2b4d" points={poly1} />
         <polygon fill="#26345a" opacity="0.8" points={poly2} />
