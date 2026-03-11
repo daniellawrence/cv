@@ -32,9 +32,13 @@ function formatDuration(us: number): string {
   return `${(us / 1_000_000).toFixed(2)}s`
 }
 
+function isNoise(warning: string): boolean {
+  return warning.includes("clock skew") || warning.includes("invalid parent span")
+}
+
 function hasError(span: JaegerSpan): boolean {
   return span.tags.some(t => t.key === "error" && t.value === true) ||
-    (span.warnings != null && span.warnings.length > 0)
+    (span.warnings != null && span.warnings.some(w => !isNoise(w)))
 }
 
 export default function TraceDebugPanel() {
@@ -230,9 +234,9 @@ export default function TraceDebugPanel() {
                         {httpUrl.replace(/^https?:\/\/[^/]+/, "")}
                       </span>
                     )}
-                    {err && span.warnings && (
-                      <span style={{ marginLeft: 8, color: "#fbbf24" }}>{span.warnings[0]}</span>
-                    )}
+                    {err && span.warnings && span.warnings.filter(w => !isNoise(w)).map((w, i) => (
+                      <span key={i} style={{ marginLeft: 8, color: "#fbbf24" }}>{w}</span>
+                    ))}
                   </div>
                 </div>
               )

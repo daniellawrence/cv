@@ -13,7 +13,7 @@ const exporter = new OTLPTraceExporter({
 
 const provider = new WebTracerProvider({
   resource: resourceFromAttributes({ [ATTR_SERVICE_NAME]: 'cv-frontend' }),
-  spanProcessors: [new BatchSpanProcessor(exporter)],
+  spanProcessors: [new BatchSpanProcessor(exporter, { scheduledDelayMillis: 1000 })],
 })
 
 provider.register({
@@ -40,3 +40,7 @@ export function tracedFetch(url: string, init?: RequestInit): Promise<Response> 
 export function getTraceId(): string {
   return pageLoadSpan.spanContext().traceId
 }
+
+// End the page-load span once the page has finished loading so it is exported
+// before child spans arrive at Jaeger, preventing "invalid parent span IDs" warnings.
+window.addEventListener('load', () => pageLoadSpan.end(), { once: true })
