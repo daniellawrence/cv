@@ -18,27 +18,22 @@ func healthz(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func zPages(mux *http.ServeMux) {
-	mux.HandleFunc("/healthz", healthz)
-}
-
 func Listen(mux *http.ServeMux) error {
 
 	shutdown := InitTracing()
 	defer shutdown(context.Background())
 
-	zPages(mux)
+	// Wrap only the app routes with otelhttp — healthz sits outside it
+	appHandler := otelhttp.NewHandler(mux, "http-server")
 
-	handler := otelhttp.NewHandler(mux, "http-server",
-		otelhttp.WithFilter(func(r *http.Request) bool {
-			return r.URL.Path != "/healthz"
-		}),
-	)
+	top := http.NewServeMux()
+	top.HandleFunc("/healthz", healthz)
+	top.Handle("/", appHandler)
 
 	addr := GetListenAddr()
 	log.Printf("Starting server on %s\n", addr)
 
-	err := http.ListenAndServe(addr, CorsMiddleware(handler))
+	err := http.ListenAndServe(addr, CorsMiddleware(top))
 	if err != nil {
 		log.Fatal(err)
 		return err
