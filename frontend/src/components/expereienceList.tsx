@@ -11,8 +11,6 @@ export default function ExperienceList({limit, offset}: {limit: number; offset: 
 
   return (
     <section>
-      <div className="section-title">Experience</div>
-
       {experience.map((e) => (         
             <div className="experience-item" key={e.id}>
                 <div className="company-name">{e.company}</div>

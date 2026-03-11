@@ -12,14 +12,15 @@ body {
 }
 
 .container {
-    max-width: 8.5in;
-    height: 11in;
+    width: 210mm;
+    height: 297mm;
     margin: 0 auto;
     background: white;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.3in;
-    padding: 0.6in;
+    column-gap: 7.6mm;
+    row-gap: 2mm;
+    padding: 15mm;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     overflow: hidden;
 }
@@ -30,7 +31,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 0.08in;
+    margin-bottom: 0;
     padding-bottom: 0;
     border-bottom: none;
 }
@@ -45,12 +46,12 @@ body {
 .header-left p {
     font-size: 8.5pt;
     color: #666;
-    margin: 0.02in 0;
+    margin: 0.5mm 0;
 }
 
 .qr-code {
-    width: 0.8in;
-    height: 0.8in;
+    width: 20mm;
+    height: 20mm;
     background: #ffffff;
     border: 1px solid #ddd;
     display: flex;
@@ -65,29 +66,27 @@ body {
 
 /* Left Column - Experience */
 .left-column {
-    overflow-y: auto;
-    max-height: 9.3in;
-    padding-right: 0.15in;
-    margin-top: -100px;
+    overflow: hidden;
+    padding-right: 4mm;
+    margin-top: -25mm;
 }
 
 /* Right Column - Education and Skills */
 .right-column {
-    overflow-y: auto;
-    max-height: 9.3in;
-    padding-left: 0.15in;
-    margin-top: -100px;
+    overflow: hidden;
+    padding-left: 4mm;
+    margin-top: -25mm;
 }
 
 .section-title {
     font-size: 11pt;
     font-weight: 700;
-    margin: 0.05in 0 0.1in 0;
+    margin: 1.3mm 0 2.5mm 0;
     color: #1a1a1a;
 }
 
 .experience-item {
-    margin-bottom: 0.14in;
+    margin-bottom: 3.5mm;
     font-size: 9pt;
 }
 
@@ -95,7 +94,7 @@ body {
     font-weight: 700;
     font-size: 9pt;
     color: #1a1a1a;
-    margin: 0.08in 0 0.02in 0;
+    margin: 2mm 0 0.5mm 0;
 }
 
 .job-title {
@@ -112,55 +111,55 @@ body {
 .job-header {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 0.02in;
+    margin-bottom: 0.5mm;
 }
 
 .location {
     font-size: 8pt;
     color: #666;
-    margin-bottom: 0.04in;
+    margin-bottom: 1mm;
 }
 
 .job-bullets {
     font-size: 8pt;
     color: #333;
-    margin: 0.03in 0;
+    margin: 0.8mm 0;
     line-height: 1.3;
 }
 
 .bullet {
-    margin-left: 0.15in;
-    text-indent: -0.1in;
-    margin-bottom: 0.02in;
+    margin-left: 4mm;
+    text-indent: -2.5mm;
+    margin-bottom: 0.5mm;
 }
 
 .bullet:before {
     content: "• ";
-    margin-right: 0.05in;
+    margin-right: 1.3mm;
 }
 
 .tech-stack {
     font-size: 7.5pt;
     color: #666;
-    margin-top: 0.02in;
+    margin-top: 0.5mm;
     font-style: italic;
 }
 
 .education-item {
-    margin-bottom: 0.12in;
+    margin-bottom: 3mm;
     font-size: 8.5pt;
 }
 
 .degree {
     font-weight: 700;
     color: #1a1a1a;
-    margin-bottom: 0.01in;
+    margin-bottom: 0.25mm;
 }
 
 .school {
     color: #333;
     font-size: 8pt;
-    margin-bottom: 0.01in;
+    margin-bottom: 0.25mm;
 }
 
 .year {
@@ -169,14 +168,14 @@ body {
 }
 
 .skills-section {
-    margin-bottom: 0.12in;
+    margin-bottom: 3mm;
 }
 
 .skill-category {
     font-size: 8.5pt;
     font-weight: 600;
     color: #1a1a1a;
-    margin-bottom: 0.02in;
+    margin-bottom: 0.5mm;
 }
 
 .skill-text {
@@ -188,11 +187,16 @@ body {
 .subsection-title {
     font-weight: 600;
     font-size: 8.5pt;
-    margin: 0.08in 0 0.04in 0;
+    margin: 2mm 0 1mm 0;
     color: #1a1a1a;
 }
 
 @media print {
+    @page {
+        size: A4;
+        margin: 0;
+    }
+
     body {
         margin: 0;
         padding: 0;
@@ -200,9 +204,8 @@ body {
 
     .container {
         box-shadow: none;
-        max-width: 100%;
+        width: 210mm;
+        height: 297mm;
         margin: 0;
-        height: auto;
-        padding: 0.5in;
     }
 }

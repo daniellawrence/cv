@@ -13,7 +13,5 @@ export async function fetchExperience({ limit, offset }: { limit: number; offset
     }
 
     const json = await res.json()
-    // TODO: change the pagination to match the limit and then use pages.
-    const experience = json.experience.slice(offset, offset + limit)
-    return experience.map(e => fromJson(ExperienceSchema, e))
+    return json.experience.map(e => fromJson(ExperienceSchema, e))
 }
