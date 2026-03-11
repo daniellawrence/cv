@@ -29,7 +29,6 @@ metadata:
   namespace: jaeger
 spec:
   headers:
-    accessControlAllowCredentials: true
     accessControlAllowHeaders:
     - Content-Type
     - traceparent
@@ -38,5 +37,24 @@ spec:
     - POST
     - OPTIONS
     accessControlAllowOriginList:
-    - https://dansysadm.com
+    - '*'
+    accessControlMaxAge: 86400
+---
+# Source: jaeger/templates/extra-list.yaml
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: query-cors
+  namespace: jaeger
+spec:
+  headers:
+    accessControlAllowHeaders:
+    - Content-Type
+    - traceparent
+    - tracestate
+    accessControlAllowMethods:
+    - GET
+    - OPTIONS
+    accessControlAllowOriginList:
+    - '*'
     accessControlMaxAge: 86400

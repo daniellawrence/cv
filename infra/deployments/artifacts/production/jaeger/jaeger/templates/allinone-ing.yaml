@@ -11,6 +11,8 @@ metadata:
     app.kubernetes.io/version: "1.45.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: all-in-one
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: jaeger-query-cors@kubernetescrd
 spec:
   ingressClassName: traefik
   rules:

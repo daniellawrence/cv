@@ -247,7 +247,7 @@ export default function TraceDebugPanel() {
       {/* Prominent trigger button — rendered in document flow below the CV card */}
       <button
         className={`trace-trigger${hasTraces ? " ready" : ""}`}
-        onClick={() => setPanelOpen(true)}
+        onClick={() => setPanelOpen(v => !v)}
         title="Alt+D to toggle"
       >
         <span className={`trace-dot${hasTraces ? " live" : ""}`} />
