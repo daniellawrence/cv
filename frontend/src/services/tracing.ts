@@ -1,22 +1,42 @@
-function randomHex(bytes: number): string {
-  return Array.from(crypto.getRandomValues(new Uint8Array(bytes)))
-    .map(b => b.toString(16).padStart(2, "0"))
-    .join("")
-}
+import { WebTracerProvider, StackContextManager, BatchSpanProcessor } from '@opentelemetry/sdk-trace-web'
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http'
+import { FetchInstrumentation } from '@opentelemetry/instrumentation-fetch'
+import { registerInstrumentations } from '@opentelemetry/instrumentation'
+import { context, trace, Span } from '@opentelemetry/api'
+import { resourceFromAttributes } from '@opentelemetry/resources'
+import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions'
+import { ServiceEndpoints } from './endpoints'
 
-const pageTraceId = randomHex(16) // reset on every page load
+const exporter = new OTLPTraceExporter({
+  url: ServiceEndpoints.otlp,
+})
+
+const provider = new WebTracerProvider({
+  resource: resourceFromAttributes({ [ATTR_SERVICE_NAME]: 'cv-frontend' }),
+  spanProcessors: [new BatchSpanProcessor(exporter)],
+})
+
+provider.register({
+  contextManager: new StackContextManager(),
+})
+
+registerInstrumentations({
+  instrumentations: [
+    new FetchInstrumentation({
+      propagateTraceHeaderCorsUrls: [/localhost/],
+    }),
+  ],
+})
+
+const tracer = trace.getTracer('cv-frontend')
+
+const pageLoadSpan: Span = tracer.startSpan('page-load')
+export const pageLoadContext = trace.setSpan(context.active(), pageLoadSpan)
 
 export function tracedFetch(url: string, init?: RequestInit): Promise<Response> {
-  const traceId = pageTraceId
-  const spanId = randomHex(8) // 16 hex chars = 64-bit span id
-  const traceparent = `00-${traceId}-${spanId}-01`
-  console.log(traceId, spanId, traceparent)
+  return context.with(pageLoadContext, () => fetch(url, init))
+}
 
-  return fetch(url, {
-    ...init,
-    headers: {
-      ...init?.headers,
-      traceparent,
-    },
-  })
+export function getTraceId(): string {
+  return pageLoadSpan.spanContext().traceId
 }

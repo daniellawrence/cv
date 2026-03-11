@@ -30,7 +30,7 @@ spec:
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: http://jaeger-collector.jaeger:4317
             - name: OTEL_SERVICE_NAME
-              value: {{ .Release.Name }}-backend
+              value: {{ .Release.Name }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
 {{- if .Values.frontendruntimeconfig.enabled }}

@@ -9,6 +9,6 @@ data:
       {{- range .Values.frontendruntimeconfig.services }}
       {{ . | upper }}_SERVICE_URL: "{{ $.Values.ingress.schema }}://{{ . }}.{{ $.Values.ingress.domain }}/{{ . }}",
       {{- end }}
-      OTEL_EXPORTER_OTLP_ENDPOINT:  "{{ $.Values.ingress.schema }}://jaeger-collector.{{ $.Values.ingress.domain }}/v1/traces"
+      OTEL_EXPORTER_OTLP_ENDPOINT:  "{{ $.Values.ingress.schema }}://tracing.{{ $.Values.ingress.domain }}/v1/traces"
     }
 {{- end }}

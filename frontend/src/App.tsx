@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react"
 import EducationList from "./components/educationList"
 import ExperienceList from "./components/expereienceList"
 import Interest from "./components/interestList"
 import Header from "./components/header"
 import GeometricBackground from "./components/wave"
+import TraceDebugPanel from "./components/traceDebugPanel"
 
 export default function App() {
 
@@ -11,6 +11,7 @@ export default function App() {
   return (
     <>
         <GeometricBackground />
+        <TraceDebugPanel />
         <div className="container">
             <Header id="dsl" />
             

@@ -28,7 +28,7 @@ spec:
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: http://jaeger-collector.jaeger:4317
             - name: OTEL_SERVICE_NAME
-              value: education-backend
+              value: education
           resources:
             null
           livenessProbe:
