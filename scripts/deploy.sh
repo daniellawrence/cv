@@ -8,12 +8,6 @@ if [[ "${1}" == "prod" ]];then
     export KUBECONFIG=${GIT_ROOT}/infra/k8s/k3s.yaml
 fi
 
-# ./bin/helmfile  \
-#    --environment ${ENVIRONMENT} \
-#    --helm-binary ${PWD}/bin/helm \
-#    --file infra/deployments/helmfile.yaml \
-#    delete
-
 ./bin/helmfile  \
     --environment ${ENVIRONMENT} \
     --helm-binary ${PWD}/bin/helm \
@@ -26,3 +20,5 @@ fi
     --helm-binary ${PWD}/bin/helm \
     --file infra/deployments/helmfile.yaml \
     sync
+
+# kubectl rollout restart deployment -n interest

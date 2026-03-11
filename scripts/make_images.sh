@@ -3,13 +3,21 @@ source $(dirname $0)/lib.sh
 cd $GIT_ROOT
 
 TARGET="dev"
-if [[ "${1}" == "prod" ]];then
-    TARGET="prod"
-fi
+SERVICE_FILTER=""
+
+for arg in "$@"; do
+    case "$arg" in
+        prod) TARGET="prod" ;;
+        --service) shift; SERVICE_FILTER="$1" ;;
+        --service=*) SERVICE_FILTER="${arg#--service=}" ;;
+    esac
+    shift 2>/dev/null || true
+done
 
 
 for SERVICE_DOCKERFILE in  $(find frontend -name Dockerfile);do
     SERVICE=$(dirname $SERVICE_DOCKERFILE)
+    [[ -n "${SERVICE_FILTER}" && "${SERVICE}" != *"${SERVICE_FILTER}"* ]] && continue
     CONTENT_SHA1=$(frontend_content_sha ${SERVICE})
     IMAGE_NAME=${IMAGE_PREFIX}/${SERVICE}:latest
     IMAGE_FILE="dist/${SERVICE}.${CONTENT_SHA1}.tar.gz"
@@ -25,12 +33,14 @@ for SERVICE_DOCKERFILE in  $(find frontend -name Dockerfile);do
 
     if [[ "${TARGET}" == "dev" ]];then
         ./bin/k3d image import --cluster ${KUBE_CLUSER_NAME} ${IMAGE_FILE}
+        docker exec -it k3d-k0-server-0 crictl images |grep $SERVICE
     fi
 
 done
 
 for SERVICE_DOCKERFILE in $(find backend -name Dockerfile);do
     SERVICE=$(basename $(dirname $SERVICE_DOCKERFILE))
+    [[ -n "${SERVICE_FILTER}" && "${SERVICE}" != *"${SERVICE_FILTER}"* ]] && continue
     CONTENT_SHA1=$(backend_content_sha ${SERVICE})
     IMAGE_NAME=${IMAGE_PREFIX}/${SERVICE}:latest
     IMAGE_FILE="dist/${SERVICE}.${CONTENT_SHA1}.tar.gz"
@@ -45,6 +55,7 @@ for SERVICE_DOCKERFILE in $(find backend -name Dockerfile);do
 
     if [[ "${TARGET}" == "dev" ]];then
         ./bin/k3d image import --cluster ${KUBE_CLUSER_NAME} ${IMAGE_FILE}
+        docker exec -it k3d-k0-server-0 crictl images |grep $SERVICE
     fi
 
 done
