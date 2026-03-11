@@ -3,12 +3,14 @@ import EducationList from "./components/educationList"
 import ExperienceList from "./components/expereienceList"
 import Interest from "./components/interestList"
 import Header from "./components/header"
+import GeometricBackground from "./components/wave"
 
 export default function App() {
 
 
   return (
     <>
+        <GeometricBackground />
         <div className="container">
             <Header id="dsl" />
             
