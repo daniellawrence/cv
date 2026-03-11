@@ -10,6 +10,144 @@ interface JaegerSpan {
   processID: string
   tags: { key: string; type: string; value: unknown }[]
   warnings: string[] | null
+  references?: { refType: string; traceID: string; spanID: string }[]
+}
+
+// ── Service graph helpers ──────────────────────────────────────────────────
+
+const NODE_W = 130
+const NODE_H = 38
+const H_GAP = 52
+const V_GAP = 14
+const PAD = 14
+
+function buildServiceGraph(trace: JaegerTrace) {
+  const spanMap = new Map(trace.spans.map(s => [s.spanID, s]))
+  const edgeSet = new Set<string>()
+  const edges: { from: string; to: string }[] = []
+  const nodes = new Set<string>(Object.values(trace.processes).map(p => p.serviceName))
+
+  for (const span of trace.spans) {
+    if (!span.references) continue
+    const toSvc = trace.processes[span.processID]?.serviceName
+    for (const ref of span.references) {
+      if (ref.refType !== "CHILD_OF") continue
+      const parent = spanMap.get(ref.spanID)
+      if (!parent) continue
+      const fromSvc = trace.processes[parent.processID]?.serviceName
+      if (fromSvc && toSvc && fromSvc !== toSvc) {
+        const key = `${fromSvc}|${toSvc}`
+        if (!edgeSet.has(key)) {
+          edgeSet.add(key)
+          edges.push({ from: fromSvc, to: toSvc })
+        }
+      }
+    }
+  }
+  return { nodes: [...nodes], edges }
+}
+
+function layoutGraph(nodes: string[], edges: { from: string; to: string }[]) {
+  const outEdges = new Map<string, string[]>()
+  const inDegree = new Map<string, number>()
+  for (const n of nodes) { outEdges.set(n, []); inDegree.set(n, 0) }
+  for (const e of edges) {
+    outEdges.get(e.from)?.push(e.to)
+    inDegree.set(e.to, (inDegree.get(e.to) ?? 0) + 1)
+  }
+
+  const layer = new Map<string, number>()
+  const queue = nodes.filter(n => inDegree.get(n) === 0)
+  queue.forEach(n => layer.set(n, 0))
+  for (let qi = 0; qi < queue.length; qi++) {
+    const n = queue[qi]
+    for (const child of outEdges.get(n) ?? []) {
+      const nl = (layer.get(n) ?? 0) + 1
+      if (!layer.has(child) || layer.get(child)! < nl) {
+        layer.set(child, nl)
+        queue.push(child)
+      }
+    }
+  }
+  nodes.forEach(n => { if (!layer.has(n)) layer.set(n, 0) })
+
+  const byLayer: string[][] = []
+  for (const [n, l] of layer) {
+    while (byLayer.length <= l) byLayer.push([])
+    byLayer[l].push(n)
+  }
+
+  const pos = new Map<string, { x: number; y: number }>()
+  byLayer.forEach((ln, l) =>
+    ln.forEach((n, i) =>
+      pos.set(n, { x: PAD + l * (NODE_W + H_GAP), y: PAD + i * (NODE_H + V_GAP) })
+    )
+  )
+
+  const svgW = PAD * 2 + byLayer.length * NODE_W + Math.max(0, byLayer.length - 1) * H_GAP
+  const maxRows = Math.max(...byLayer.map(l => l.length))
+  const svgH = PAD * 2 + maxRows * NODE_H + Math.max(0, maxRows - 1) * V_GAP
+
+  return { pos, svgW, svgH }
+}
+
+function ServiceGraph({ trace }: { trace: JaegerTrace }) {
+  const { nodes, edges } = buildServiceGraph(trace)
+  const { pos, svgW, svgH } = layoutGraph(nodes, edges)
+
+  return (
+    <div style={{
+      position: "fixed", left: 12, top: "50%", transform: "translateY(-50%)",
+      zIndex: 9998,
+      background: "rgba(15,23,42,0.97)",
+      border: "1px solid #334155",
+      borderRadius: 8,
+      padding: "10px 12px",
+      fontFamily: "monospace",
+      boxShadow: "0 8px 32px rgba(0,0,0,0.6)",
+    }}>
+      <div style={{ color: "#7dd3fc", fontWeight: "bold", fontSize: 11, marginBottom: 8 }}>
+        service graph
+      </div>
+      <svg width={svgW} height={svgH} style={{ display: "block", overflow: "visible" }}>
+        <defs>
+          <marker id="sg-arrow" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+            <polygon points="0 0, 7 2.5, 0 5" fill="#0ea5e9" />
+          </marker>
+        </defs>
+        {edges.map((e, i) => {
+          const f = pos.get(e.from)
+          const t = pos.get(e.to)
+          if (!f || !t) return null
+          const x1 = f.x + NODE_W, y1 = f.y + NODE_H / 2
+          const x2 = t.x - 1,     y2 = t.y + NODE_H / 2
+          const mx = (x1 + x2) / 2
+          return (
+            <path key={i}
+              d={`M ${x1} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${x2} ${y2}`}
+              fill="none" stroke="#0ea5e9" strokeWidth={1.5}
+              markerEnd="url(#sg-arrow)" opacity={0.75}
+            />
+          )
+        })}
+        {nodes.map(n => {
+          const p = pos.get(n)
+          if (!p) return null
+          const label = n.length > 16 ? n.slice(0, 15) + "…" : n
+          return (
+            <g key={n}>
+              <rect x={p.x} y={p.y} width={NODE_W} height={NODE_H}
+                rx={6} fill="rgba(30,41,59,0.95)" stroke="#475569" strokeWidth={1} />
+              <text x={p.x + NODE_W / 2} y={p.y + NODE_H / 2 + 4}
+                textAnchor="middle" fill="#7dd3fc" fontSize={11} fontFamily="monospace">
+                {label}
+              </text>
+            </g>
+          )
+        })}
+      </svg>
+    </div>
+  )
 }
 
 interface JaegerProcess {
@@ -60,7 +198,7 @@ export default function TraceDebugPanel() {
       const json: JaegerResponse = await res.json()
       const found = json.data?.[0] ?? null
       setTrace(found)
-      if (found && found.spans.length >= 30) hasTrace.current = true
+      if (found && found.spans.length >= 32) hasTrace.current = true
       setLastFetch(new Date())
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e))
@@ -131,6 +269,9 @@ export default function TraceDebugPanel() {
           </>
         )}
       </button>
+
+      {/* Service graph — left side */}
+      {panelOpen && trace && <ServiceGraph trace={trace} />}
 
       {/* Detail panel overlay */}
       {panelOpen && (
