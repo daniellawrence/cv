@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
-import { fetchExperience, type Experience } from "../services/experience"
+import { fetchExperience } from "../services/experience"
+import type { Experience } from "@cv/proto/experience/v1/experience_pb"
 
 export default function ExperienceList({limit, offset}: {limit: number; offset: number}) {
   const [experience, setExperience] = useState<Experience[]>([])
@@ -23,8 +24,8 @@ export default function ExperienceList({limit, offset}: {limit: number; offset: 
                     ))}
                 </div>
                 <div className="tech-stack">
-                    {e.skills.map((k) => (     
-                    <span key={k} className="tech-stack-skill">{k}, </span>
+                    {e.skills.map((k, i) => (
+                    <span key={k} className="tech-stack-skill">{k}{i < e.skills.length - 1 ? ", " : ""}</span>
                     ))}
                 </div>
             </div>
