@@ -24,12 +24,27 @@ const PAD = 14
 function buildServiceGraph(trace: JaegerTrace) {
   const spanMap = new Map(trace.spans.map(s => [s.spanID, s]))
   const edgeSet = new Set<string>()
-  const edges: { from: string; to: string }[] = []
+  const edges: { from: string; to: string; peer?: boolean }[] = []
   const nodes = new Set<string>(Object.values(trace.processes).map(p => p.serviceName))
+  const peerNodes = new Set<string>()
 
   for (const span of trace.spans) {
+    const spanSvc = trace.processes[span.processID]?.serviceName
+
+    // peer.service edges
+    const peerTag = span.tags.find(t => t.key === "peer.service")
+    if (peerTag && spanSvc && typeof peerTag.value === "string") {
+      const peer = peerTag.value
+      peerNodes.add(peer)
+      const key = `${spanSvc}|${peer}`
+      if (!edgeSet.has(key)) {
+        edgeSet.add(key)
+        edges.push({ from: spanSvc, to: peer, peer: true })
+      }
+    }
+
     if (!span.references) continue
-    const toSvc = trace.processes[span.processID]?.serviceName
+    const toSvc = spanSvc
     for (const ref of span.references) {
       if (ref.refType !== "CHILD_OF") continue
       const parent = spanMap.get(ref.spanID)
@@ -44,7 +59,7 @@ function buildServiceGraph(trace: JaegerTrace) {
       }
     }
   }
-  return { nodes: [...nodes], edges }
+  return { nodes: [...nodes], peerNodes: [...peerNodes], edges }
 }
 
 function layoutGraph(nodes: string[], edges: { from: string; to: string }[]) {
@@ -92,8 +107,10 @@ function layoutGraph(nodes: string[], edges: { from: string; to: string }[]) {
 }
 
 function ServiceGraph({ trace }: { trace: JaegerTrace }) {
-  const { nodes, edges } = buildServiceGraph(trace)
-  const { pos, svgW, svgH } = layoutGraph(nodes, edges)
+  const { nodes, peerNodes, edges } = buildServiceGraph(trace)
+  const allNodes = [...nodes, ...peerNodes.filter(p => !nodes.includes(p))]
+  const { pos, svgW, svgH } = layoutGraph(allNodes, edges)
+  const peerSet = new Set(peerNodes)
 
   return (
     <div className="trace-service-graph" style={{
@@ -114,6 +131,9 @@ function ServiceGraph({ trace }: { trace: JaegerTrace }) {
           <marker id="sg-arrow" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
             <polygon points="0 0, 7 2.5, 0 5" fill="#0ea5e9" />
           </marker>
+          <marker id="sg-arrow-peer" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+            <polygon points="0 0, 7 2.5, 0 5" fill="#a78bfa" />
+          </marker>
         </defs>
         {edges.map((e, i) => {
           const f = pos.get(e.from)
@@ -122,24 +142,32 @@ function ServiceGraph({ trace }: { trace: JaegerTrace }) {
           const x1 = f.x + NODE_W, y1 = f.y + NODE_H / 2
           const x2 = t.x - 1,     y2 = t.y + NODE_H / 2
           const mx = (x1 + x2) / 2
+          const color = e.peer ? "#a78bfa" : "#0ea5e9"
           return (
             <path key={i}
               d={`M ${x1} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${x2} ${y2}`}
-              fill="none" stroke="#0ea5e9" strokeWidth={1.5}
-              markerEnd="url(#sg-arrow)" opacity={0.75}
+              fill="none" stroke={color} strokeWidth={1.5}
+              strokeDasharray={e.peer ? "4 3" : undefined}
+              markerEnd={e.peer ? "url(#sg-arrow-peer)" : "url(#sg-arrow)"} opacity={0.75}
             />
           )
         })}
-        {nodes.map(n => {
+        {allNodes.map(n => {
           const p = pos.get(n)
           if (!p) return null
+          const isPeer = peerSet.has(n)
           const label = n.length > 16 ? n.slice(0, 15) + "…" : n
           return (
             <g key={n}>
               <rect x={p.x} y={p.y} width={NODE_W} height={NODE_H}
-                rx={6} fill="rgba(30,41,59,0.95)" stroke="#475569" strokeWidth={1} />
+                rx={6}
+                fill={isPeer ? "rgba(46,16,101,0.85)" : "rgba(30,41,59,0.95)"}
+                stroke={isPeer ? "#7c3aed" : "#475569"}
+                strokeWidth={1}
+                strokeDasharray={isPeer ? "4 3" : undefined}
+              />
               <text x={p.x + NODE_W / 2} y={p.y + NODE_H / 2 + 4}
-                textAnchor="middle" fill="#7dd3fc" fontSize={11} fontFamily="monospace">
+                textAnchor="middle" fill={isPeer ? "#c4b5fd" : "#7dd3fc"} fontSize={11} fontFamily="monospace">
                 {label}
               </text>
             </g>
