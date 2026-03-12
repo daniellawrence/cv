@@ -3,8 +3,8 @@ replicaCount: 1
 image:
   repository: nginx
   tag: latest
-  pullPolicy: Never
-  repo: dansysadm.com/images
+  pullPolicy: Always
+  repo: registry:5000
 
 service:
   port: 8080
@@ -17,4 +17,8 @@ ingress:
   domain: localhost
 
 frontendruntimeconfig:
+  enabled: false
+
+
+misql:
   enabled: false

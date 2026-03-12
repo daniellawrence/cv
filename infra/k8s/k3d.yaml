@@ -20,3 +20,14 @@ options:
   kubeconfig:
     updateDefaultKubeconfig: false
     switchCurrentContext: false
+
+registries:
+  create:
+    name: registry
+    host: "0.0.0.0"
+    hostPort: "5000"
+  config: |
+    mirrors:
+      "registry:5000":
+        endpoint:
+          - http://registry:5000

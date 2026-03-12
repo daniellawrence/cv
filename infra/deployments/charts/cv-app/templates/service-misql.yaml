@@ -1,0 +1,14 @@
+{{- if .Values.misql.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-db
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: {{ .Release.Name }}-db
+  ports:
+    - port: 3306
+      targetPort: 3306
+      protocol: TCP
+{{- endif }}

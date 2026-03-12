@@ -1,0 +1,45 @@
+{{- if .Values.misql.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-db
+  labels:
+    app: {{ .Release.Name }}-db
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-db
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-db
+    spec:
+      containers:
+        - name: misql
+          image: "dlawrence00/misql:0.0.1"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_TCP_PORT
+              value: "3306"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://jaeger-collector.jaeger:4317
+            - name: OTEL_SERVICE_NAME
+              value: {{ .Release.Name }}-db
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+{{- if .Values.misql.enabled }}
+          volumeMounts:
+            - name: misql-data
+              mountPath: /data/cv/{{ .Release.Name }}.yaml
+              subPath: {{ .Release.Name }}.yaml
+{{- end }}
+{{- if .Values.misql.enabled }}
+      volumes:
+        - name: misql-data
+          configMap:
+            name: misql-data
+{{- end }}
+{{- end }}

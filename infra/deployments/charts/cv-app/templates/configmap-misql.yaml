@@ -1,0 +1,9 @@
+{{- if .Values.misql.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: misql-data
+data:
+  {{ .Release.Name }}.yaml: |
+{{ toYaml .Values.misql.data | nindent 4 }}
+{{- end }}
