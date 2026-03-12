@@ -14,9 +14,9 @@ var experiences = []*experiencev1.Experience{
 			"Led reliability for Block's telemetry platform",
 			"Platform migrations from Sumologic and NewRelic into Datadog",
 			"Managed full lifecycle of logging, metrics, and tracing for Afterpay, Cash, and Square",
-			"Agent skills developement for including sentry management, k8s rightsizing, and datadog cost control",
+			"Agent skills development for including sentry management, k8s rightsizing, and datadog cost control",
 			"MCP development for internal log platform",
-			"telemetry pipeline design and implementation",
+			"Telemetry pipeline design and implementation",
 			"Mentoring, technical guidance and project planning",
 		},
 		Skills: []string{
@@ -50,7 +50,7 @@ var experiences = []*experiencev1.Experience{
 			"Led Tools, Monitoring, Metrics, and SCM/CI/CD SRE teams scaling",
 			"Architected and maintained CI/CD infrastructure",
 			"Platform scaling across configuration management, metrics, logs, CI/CD, and Kubernetes",
-			"Designed and implmeneted standard build templates",
+			"Designed and implemented standard build templates",
 			"Core member of building out first GCP environment",
 		},
 		Skills: []string{
@@ -67,11 +67,10 @@ var experiences = []*experiencev1.Experience{
 		Location:  "San Francisco Bay Area",
 		Highlights: []string{
 			"SRE for 100+ applications across thousands of hosts in a service-oriented architecture",
-			"Mentored SRE team growth from 3 to 12 engineers",
-			"Overhauled monitoring philosophy and implementation across multiple teams",
-			"Created and lead many training & knowledge sharing efforts, speaking at external conferences.",
-			"Started SRE scorecard for service improvement across all of linkedin",
 			"Mentoring and training my growing SRE team (3 to 12), while preserving a site-up and members first culture",
+			"Overhauled monitoring philosophy and implementation across multiple teams",
+			"Created and led many training & knowledge sharing efforts, speaking at external conferences.",
+			"Started SRE scorecard for service improvement across all of LinkedIn",
 		},
 		Skills: []string{
 			"Python", "Java", "Go", "Kafka", "containerd", "couchdb",
@@ -87,8 +86,8 @@ var experiences = []*experiencev1.Experience{
 		Highlights: []string{
 			"Founding member of Cloud Services team scaling from 2 to 5 engineers",
 			"Built Medibank's first AWS environment and PCI compliance automation",
-			"Improved build times and realibility with docker & buildbot",
-			"Contributed to core code-base and implemenated product and realibility features",
+			"Improved build times and reliability with docker & buildbot",
+			"Contributed to core code-base and implemented product and reliability features",
 		},
 		Skills: []string{
 			"AWS", "Puppet", "Python", "django", "docker",

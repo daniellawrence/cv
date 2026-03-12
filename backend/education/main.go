@@ -9,16 +9,6 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-var educations = []*educationv1.Education{
-	{
-		Id:          1,
-		Institution: "Griffith University",
-		Degree:      "Bachelor, Information Technology",
-		StartDate:   "2005-12",
-		EndDate:     "2008-06",
-	},
-}
-
 func listEducation(w http.ResponseWriter, r *http.Request) {
 	m := protojson.MarshalOptions{
 		UseProtoNames:   false,

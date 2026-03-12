@@ -9,15 +9,6 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-var identitys = []*identityv1.Identity{
-	{
-		Id:       "dsl",
-		Name:     "Daniel Lawrence",
-		Email:    "dslawrence@protonmail.com",
-		Linkedin: "https://www.linkedin.com/in/dannylawrence/",
-	},
-}
-
 func listidentity(w http.ResponseWriter, r *http.Request) {
 	m := protojson.MarshalOptions{
 		UseProtoNames:   false,
