@@ -3,7 +3,7 @@ BIN_DIR="${GIT_ROOT}/bin"
 export KUBECONFIG=${GIT_ROOT}/infra/k8s/kubeconfig.yaml
 export PROD_KUBECONFIG=${GIT_ROOT}/infra/k8s/k3s.yaml
 export KUBE_CLUSER_NAME=k0
-export IMAGE_PREFIX="dansysadm.com/images"
+export IMAGE_PREFIX="localhost:5000"
 
 
 function backend_content_sha() {
