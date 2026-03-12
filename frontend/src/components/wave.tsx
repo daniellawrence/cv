@@ -37,6 +37,7 @@ export default function GeometricBackground() {
 
   const poly1 = buildPolygon(450, 35, 0)
   const poly2 = buildPolygon(620, 40, 1.5)
+  const poly3 = buildPolygon(780, 30, 3.0)
 
   return (
     <div
@@ -55,6 +56,7 @@ export default function GeometricBackground() {
       >
         <polygon fill="#1f2b4d" points={poly1} />
         <polygon fill="#26345a" opacity="0.8" points={poly2} />
+        <polygon fill="#2e3f6e" opacity="0.6" points={poly3} />
       </svg>
     </div>
   )
