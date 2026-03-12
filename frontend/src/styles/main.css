@@ -135,14 +135,12 @@ body {
 .left-column {
     overflow: hidden;
     padding-right: 4mm;
-    margin-top: -25mm;
 }
 
 /* Right Column - Education and Skills */
 .right-column {
     overflow: hidden;
     padding-left: 4mm;
-    margin-top: -25mm;
 }
 
 .section-title {
@@ -291,7 +289,7 @@ body {
 
     body {
         margin: 0;
-        padding: 0;
+        padding: 10mm;
     }
 
     .container {

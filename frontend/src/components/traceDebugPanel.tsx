@@ -256,7 +256,7 @@ export default function TraceDebugPanel() {
         <span className={`trace-dot${hasTraces ? " live" : ""}`} />
         {loading && !trace && "fetching traces…"}
         {!loading && !hasTraces && !error && "waiting for traces"}
-        {error && <span style={{ color: "#f87171" }}>trace unavailable</span>}
+        {error && <span style={{ color: "#f87171" }}>traces loading...</span>}
         {hasTraces && (
           <>
             <span style={{ color: "#38bdf8", fontWeight: "bold" }}>
@@ -275,6 +275,13 @@ export default function TraceDebugPanel() {
 
       {/* Service graph — left side */}
       {panelOpen && trace && <ServiceGraph trace={trace} />}
+
+      {/* Backdrop */}
+      {panelOpen && (
+        <div onClick={() => setPanelOpen(v => !v)} style={{
+          position: "fixed", inset: 0, zIndex: 9997,
+        }} />
+      )}
 
       {/* Detail panel overlay */}
       {panelOpen && (
@@ -308,12 +315,6 @@ export default function TraceDebugPanel() {
               }}>
                 {loading ? "…" : "refresh"}
               </button>
-              <a href={jaegerUiUrl} target="_blank" rel="noreferrer" style={{
-                background: "none", border: "1px solid #475569", color: "#94a3b8",
-                borderRadius: 4, padding: "2px 7px", fontSize: 10, textDecoration: "none",
-              }}>
-                jaeger ↗
-              </a>
               <button onClick={() => setPanelOpen(false)} style={{
                 background: "none", border: "none", color: "#94a3b8",
                 cursor: "pointer", fontSize: 14, lineHeight: 1, padding: "0 2px",
