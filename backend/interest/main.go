@@ -9,37 +9,6 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-var interests = []*interestv1.Interest{
-	{
-		Id:   "tech",
-		Type: "Technical Interests",
-		Names: []string{
-			"Site Reliability Engineering",
-			"Observability Architecture",
-			"Continuous Deployment",
-			"Developer Tooling",
-		},
-	},
-	{
-		Id:   "skills",
-		Type: "Languages",
-		Names: []string{
-			"go",
-			"python",
-			"ai-skills + workflows",
-		},
-	},
-	{
-		Id:   "hobbies",
-		Type: "Hobbies",
-		Names: []string{
-			"3D printing / All things maker",
-			"Home Automation",
-			"Wildlife Rescue",
-		},
-	},
-}
-
 func listInterest(w http.ResponseWriter, r *http.Request) {
 	m := protojson.MarshalOptions{
 		UseProtoNames:   false,
