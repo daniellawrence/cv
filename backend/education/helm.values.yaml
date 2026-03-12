@@ -1,0 +1,17 @@
+misql:
+  enabled: true
+  data:
+    columns:
+      - id
+      - institution
+      - degree
+      - field_of_study
+      - start_date
+      - end_date
+    rows:
+      - id: "1"
+        institution:    "Griffith University"
+        degree:         "Bachelor, Information Technology"
+        field_of_study: "-"
+        start_date:     "2005-12"
+        end_date:       "2008-06"

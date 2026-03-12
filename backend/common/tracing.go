@@ -29,10 +29,13 @@ func InitTracing() func(context.Context) error {
 		panic(err)
 	}
 
-	res := resource.NewWithAttributes(
-		resource.Default().SchemaURL(),
-		attribute.String("image.content_sha1", ContentSHA1),
-		attribute.String("image.build_timestamp", BuildTimestamp),
+	res, _ := resource.Merge(
+		resource.Default(),
+		resource.NewWithAttributes(
+			resource.Default().SchemaURL(),
+			attribute.String("image.content_sha1", ContentSHA1),
+			attribute.String("image.build_timestamp", BuildTimestamp),
+		),
 	)
 
 	tp := trace.NewTracerProvider(
