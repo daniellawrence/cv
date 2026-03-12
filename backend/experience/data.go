@@ -73,7 +73,7 @@ var experiences = []*experiencev1.Experience{
 			"Started SRE scorecard for service improvement across all of LinkedIn",
 		},
 		Skills: []string{
-			"Python", "Java", "Go", "Kafka", "containerd", "couchdb",
+			"Python", "Java", "Go", "Kafka",
 		},
 	},
 	{
