@@ -1,0 +1,12 @@
+backend/
+gen/go
+infra/
+proto/
+bin/
+dist/
+scripts/
+reference/
+go.work
+go.work.sum
+README.md
+Makefile

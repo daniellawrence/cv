@@ -1,0 +1,9 @@
+frontend/
+infra/
+proto/
+bin/
+dist/
+scripts/
+reference/
+README.md
+Makefile
