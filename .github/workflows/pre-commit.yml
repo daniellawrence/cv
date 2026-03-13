@@ -25,4 +25,9 @@ jobs:
       - name: Install golangci-lint
         run: curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b $(go env GOPATH)/bin
 
+      - name: Install kubectl-validate
+        run: |
+          curl -sSfL https://github.com/kubernetes-sigs/kubectl-validate/releases/download/v0.0.4/kubectl-validate_linux_amd64.tar.gz \
+            | tar -xz -C $(go env GOPATH)/bin kubectl-validate
+
       - uses: pre-commit/action@v3.0.1

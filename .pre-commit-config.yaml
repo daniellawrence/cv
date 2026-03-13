@@ -1,8 +1,19 @@
 repos:
+  - repo: local
+    hooks:
+      - id: kubectl-validate
+        name: kubectl-validate
+        language: system
+        entry: kubectl-validate
+        args:
+          - --local-crds=infra/crds/traefik
+        files: ^infra/deployments/artifacts/
+
   - repo: https://github.com/adrienverge/yamllint
     rev: v1.38.0
     hooks:
       - id: yamllint
+        exclude: ^infra/crds/
 
   - repo: https://github.com/golangci/golangci-lint
     rev: v2.1.6

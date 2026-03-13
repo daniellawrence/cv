@@ -2,6 +2,7 @@ HELM_VERSION := v3.14.0
 HELMFILE_VERSION := v3.14.0
 K3D_VERSION := v5.9.0-rc.0
 KUBECTL_VERSION := v1.29.0
+KUBECTL_VALIDATE_VERSION := v0.0.4
 # Hardcoded for Linux amd64
 OS := linux
 ARCH := amd64
@@ -10,7 +11,7 @@ BUF=buf
 
 .PHONY: setup proto test clean lint provision
 
-install: install-k3d install-kubectl install-helm install-helmfile
+install: install-k3d install-kubectl install-helm install-helmfile install-kubectl-validate
 
 provision:
 	$(MAKE) -C infra/ansible run
@@ -60,6 +61,15 @@ bin/helm:
 	@echo "✓ Helm installed: $$(bin/helm version --short)"
 
 # Helmfile
+.PHONY: install-kubectl-validate
+install-kubectl-validate: bin/kubectl-validate
+bin/kubectl-validate:
+	@echo "Installing kubectl-validate $(KUBECTL_VALIDATE_VERSION)..."
+	@mkdir -p bin/ ~/.local/bin/
+	@curl -sSfL https://github.com/kubernetes-sigs/kubectl-validate/releases/download/$(KUBECTL_VALIDATE_VERSION)/kubectl-validate_$(OS)_$(ARCH).tar.gz \
+		| tar -xz -C bin/ kubectl-validate
+	@cp bin/kubectl-validate ~/.local/bin/kubectl-validate
+
 .PHONY: install-helmfile
 install-helmfile: bin/helmfile
 bin/helmfile:

@@ -5,6 +5,7 @@ ignore: |
   infra/deployments/charts/
   infra/deployments/helmfile.yaml
   infra/ansible/.venv/
+  infra/crds/
 
 rules:
   document-start: disable
