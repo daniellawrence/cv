@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cv-app-of-apps-dev
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://github.com/daniellawrence/cv
+      targetRevision: HEAD
+      path: infra/argocd/projects
+    - repoURL: https://github.com/daniellawrence/cv
+      targetRevision: HEAD
+      path: infra/argocd/dev
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

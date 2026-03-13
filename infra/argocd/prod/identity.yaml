@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cv-identity-prod
+  namespace: argocd
+spec:
+  project: cv-prod
+  source:
+    repoURL: https://github.com/daniellawrence/cv
+    targetRevision: HEAD
+    path: infra/deployments/charts/cv-app
+    helm:
+      valueFiles:
+        - ../../env/production.yaml
+        - ../../../../backend/identity/helm.values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: identity
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

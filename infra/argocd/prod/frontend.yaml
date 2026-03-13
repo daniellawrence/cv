@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cv-frontend-prod
+  namespace: argocd
+spec:
+  project: cv-prod
+  source:
+    repoURL: https://github.com/daniellawrence/cv
+    targetRevision: HEAD
+    path: infra/deployments/charts/cv-app
+    helm:
+      valueFiles:
+        - ../../env/production.yaml
+        - ../../../../frontend/helm.values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: frontend
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

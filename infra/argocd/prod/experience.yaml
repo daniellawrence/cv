@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cv-experience-prod
+  namespace: argocd
+spec:
+  project: cv-prod
+  source:
+    repoURL: https://github.com/daniellawrence/cv
+    targetRevision: HEAD
+    path: infra/deployments/charts/cv-app
+    helm:
+      valueFiles:
+        - ../../env/production.yaml
+        - ../../../../backend/experience/helm.values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: experience
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

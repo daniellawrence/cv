@@ -1,6 +1,8 @@
 repositories:
   - name: jaegertracing
     url: https://jaegertracing.github.io/helm-charts
+  - name: argo
+    url: https://argoproj.github.io/argo-helm
 
 environments:
   dev:
@@ -15,6 +17,8 @@ releases:
 
   - name: interest
     namespace: interest
+    labels:
+      tier: app
     chart: ./charts/cv-app
     values:
       - {{ toYaml .Environment.Values | nindent 8 }}
@@ -22,6 +26,8 @@ releases:
 
   - name: education
     namespace: education
+    labels:
+      tier: app
     chart: ./charts/cv-app
     values:
       - {{ toYaml .Environment.Values | nindent 8 }}
@@ -29,6 +35,8 @@ releases:
 
   - name: qrcode
     namespace: qrcode
+    labels:
+      tier: app
     chart: ./charts/cv-app
     values:
       - {{ toYaml .Environment.Values | nindent 8 }}
@@ -36,6 +44,8 @@ releases:
 
   - name: identity
     namespace: identity
+    labels:
+      tier: app
     chart: ./charts/cv-app
     values:
       - {{ toYaml .Environment.Values | nindent 8 }}
@@ -43,6 +53,8 @@ releases:
 
   - name: experience
     namespace: experience
+    labels:
+      tier: app
     chart: ./charts/cv-app
     values:
       - {{ toYaml .Environment.Values | nindent 8 }}
@@ -50,14 +62,44 @@ releases:
 
   - name: frontend
     namespace: frontend
+    labels:
+      tier: app
     chart: ./charts/cv-app
     values:
       - {{ toYaml .Environment.Values | nindent 8 }}
       - ../../frontend/helm.values.yaml
 
+  - name: argocd
+    namespace: argocd
+    createNamespace: true
+    labels:
+      tier: deploy
+    chart: argo/argo-cd
+    version: 7.8.26
+    values:
+      - {{ toYaml .Environment.Values | nindent 8 }}
+      - ../argocd/values.yaml.gotmpl
+    hooks:
+      - events: ["postsync"]
+        showlogs: true
+        command: ../../bin/kubectl
+        args:
+          - apply
+          - -f
+          - ../argocd/projects/
+      - events: ["postsync"]
+        showlogs: true
+        command: ../../bin/kubectl
+        args:
+          - apply
+          - -f
+          - ../argocd/dev/
+
   - name: jaeger
     namespace: jaeger
     createNamespace: true
+    labels:
+      tier: infra
     chart: jaegertracing/jaeger
     version: 0.71.0
     values:

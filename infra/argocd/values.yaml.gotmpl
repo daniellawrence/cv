@@ -1,0 +1,13 @@
+global:
+  domain: argocd.{{ .Values.ingress.domain }}
+
+configs:
+  params:
+    # Let Traefik handle TLS termination
+    server.insecure: true
+
+server:
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    hostname: argocd.{{ .Values.ingress.domain }}

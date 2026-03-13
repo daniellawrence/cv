@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: cv-dev
+  namespace: argocd
+spec:
+  description: CV application - development environment
+  sourceRepos:
+    - https://github.com/daniellawrence/cv
+  destinations:
+    - namespace: "*"
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
