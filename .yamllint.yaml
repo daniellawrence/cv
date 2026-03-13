@@ -1,0 +1,12 @@
+extends: default
+
+ignore: |
+  infra/deployments/artifacts/
+  infra/deployments/charts/
+  infra/deployments/helmfile.yaml
+  infra/ansible/.venv/
+
+rules:
+  document-start: disable
+  line-length: disable
+  truthy: disable

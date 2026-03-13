@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        service: 
+        service:
           - backend/education
           - backend/experience
           - backend/interest
