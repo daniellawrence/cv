@@ -1,0 +1,23 @@
+---
+# Source: basic-app/templates/configmap-misql.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: misql-data
+data:
+  education.yaml: |
+
+    columns:
+    - id
+    - institution
+    - degree
+    - field_of_study
+    - start_date
+    - end_date
+    rows:
+    - degree: Bachelor, Information Technology
+      end_date: 2008-06
+      field_of_study: '-'
+      id: "1"
+      institution: Griffith University
+      start_date: 2005-12

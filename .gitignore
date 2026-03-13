@@ -3,3 +3,4 @@ bin
 frontend/dist
 dist
 .vscode
+kubeconfig.*

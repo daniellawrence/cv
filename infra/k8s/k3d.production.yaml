@@ -1,0 +1,36 @@
+# https://k3d.io/v5.0.0/usage/configfile/
+---
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: k0
+servers: 1
+image: docker.io/rancher/k3s:v1.33.4-k3s1
+
+kubeAPI:
+  hostIP: "127.0.0.1"
+  hostPort: "6443"
+
+ports:
+  - port: 30080:80
+    nodeFilters:
+      - loadbalancer
+  - port: 30443:443
+    nodeFilters:
+      - loadbalancer
+
+options:
+  kubeconfig:
+    updateDefaultKubeconfig: false
+    switchCurrentContext: false
+
+registries:
+  create:
+    name: registry
+    host: "127.0.0.1"
+    hostPort: "5001"
+  config: |
+    mirrors:
+      "registry:5000":
+        endpoint:
+          - http://registry:5000

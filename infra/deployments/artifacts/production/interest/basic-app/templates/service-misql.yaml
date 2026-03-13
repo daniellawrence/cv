@@ -1,0 +1,14 @@
+---
+# Source: basic-app/templates/service-misql.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: interest-db
+spec:
+  type: ClusterIP
+  selector:
+    app: interest-db
+  ports:
+    - port: 3306
+      targetPort: 3306
+      protocol: TCP

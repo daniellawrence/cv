@@ -1,0 +1,14 @@
+---
+# Source: basic-app/templates/service-misql.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: education-db
+spec:
+  type: ClusterIP
+  selector:
+    app: education-db
+  ports:
+    - port: 3306
+      targetPort: 3306
+      protocol: TCP

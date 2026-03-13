@@ -1,0 +1,19 @@
+---
+# Source: basic-app/templates/configmap-misql.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: misql-data
+data:
+  identity.yaml: |
+
+    columns:
+    - id
+    - name
+    - email
+    - linkedin
+    rows:
+    - email: dslawrence@protonmail.com
+      id: dsl
+      linkedin: https://www.linkedin.com/in/dannylawrence/
+      name: Daniel Lawrence
