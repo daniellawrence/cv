@@ -2,4 +2,4 @@
   become: true
 
   roles:
-    - k3s
+    - k3d

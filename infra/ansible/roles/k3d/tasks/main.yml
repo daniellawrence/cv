@@ -1,0 +1,64 @@
+- name: Install Docker dependencies
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+    state: present
+    update_cache: true
+
+- name: Install Docker
+  apt:
+    name: docker.io
+    state: present
+
+- name: Start and enable Docker
+  systemd:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Install kubectl
+  shell: |
+    curl -sfLo /usr/local/bin/kubectl "https://dl.k8s.io/release/$(curl -sfL https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    chmod +x /usr/local/bin/kubectl
+  args:
+    creates: /usr/local/bin/kubectl
+
+- name: Install k3d
+  shell: curl -sfL https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | TAG=v5.7.5 bash
+  args:
+    creates: /usr/local/bin/k3d
+
+- name: Copy k3d config
+  copy:
+    src: ../../../../k8s/k3d.production.yaml
+    dest: /etc/k3d.production.yaml
+    mode: "0644"
+
+- name: Check if cluster exists
+  shell: k3d cluster list -o json | python3 -c "import sys,json; print(any(c['name']=='k0' for c in json.load(sys.stdin)))"
+  register: cluster_exists
+  changed_when: false
+
+- name: Create k3d cluster
+  shell: k3d cluster create --config /etc/k3d.production.yaml
+  when: cluster_exists.stdout == "False"
+
+- name: Wait for node ready
+  shell: k3d kubeconfig get k0 | KUBECONFIG=/dev/stdin kubectl get nodes
+  register: result
+  retries: 10
+  delay: 5
+  until: result.rc == 0
+
+- name: Write kubeconfig to temp file
+  shell: |
+    k3d kubeconfig get k0 | sed 's|server: https://.*|server: https://127.0.0.1:7443|' > /tmp/k3d-k0-kubeconfig.yaml
+  changed_when: false
+
+- name: Fetch kubeconfig locally
+  fetch:
+    src: /tmp/k3d-k0-kubeconfig.yaml
+    dest: "{{ playbook_dir }}/../k8s/kubeconfig.production.yaml"
+    flat: yes
