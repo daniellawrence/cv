@@ -1,0 +1,41 @@
+---
+# Source: basic-app/templates/deployment-misql.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: experience-db
+  labels:
+    app: experience-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: experience-db
+  template:
+    metadata:
+      labels:
+        app: experience-db
+    spec:
+      containers:
+        - name: misql
+          image: "dlawrence00/misql:0.0.2"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_TCP_PORT
+              value: "3306"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://jaeger-collector.jaeger:4317
+            - name: OTEL_SERVICE_NAME
+              value: experience-db
+          resources:
+            null
+          volumeMounts:
+            - name: misql-data
+              mountPath: /data/cv/experience.yaml
+              subPath: experience.yaml
+      volumes:
+        - name: misql-data
+          configMap:
+            name: misql-data

@@ -1,0 +1,132 @@
+misql:
+  enabled: true
+  data:
+    columns:
+      - id
+      - company
+      - title
+      - start_date
+      - end_date
+      - location
+      - highlights
+      - skills
+    rows:
+      - id: "block-sre"
+        company: "Block"
+        title: "Site Reliability Engineer, Observability"
+        start_date: "2023-05"
+        end_date: "current"
+        location: "Melbourne, Australia"
+        highlights:
+          - "Led reliability for Block's telemetry platform"
+          - "Platform migrations from Sumologic and NewRelic into Datadog"
+          - "Managed full lifecycle of logging, metrics, and tracing for Afterpay, Cash, and Square"
+          - "Agent skills development for including sentry management, k8s rightsizing, and datadog cost control"
+          - "MCP development for internal log platform"
+          - "Telemetry pipeline design and implementation"
+          - "Mentoring, technical guidance and project planning"
+        skills:
+          - "AWS"
+          - "Datadog"
+          - "Vector"
+          - "OpenTelemetry"
+          - "Kubernetes"
+          - "Go"
+          - "Sentry"
+      - id: "okta-principal-sre"
+        company: "Okta"
+        title: "Principal Site Reliability Engineer, Observability"
+        start_date: "2022-04"
+        end_date: "2023-05"
+        location: "Australia"
+        highlights:
+          - "Designed automated alert routing solution for on-call response optimization"
+          - "Managed Wavefront configuration and operational administration"
+          - "Provided production support and 24/7 on-call responsibilities"
+        skills:
+          - "AWS"
+          - "Go"
+          - "Wavefront"
+          - "Prometheus"
+          - "AlertManager"
+      - id: "paloalto-techlead"
+        company: "Palo Alto Networks"
+        title: "Technical Lead, SCM, CI/CD & Observability"
+        start_date: "2017-11"
+        end_date: "2022-04"
+        location: "Melbourne, Australia"
+        highlights:
+          - "Led Tools, Monitoring, Metrics, and SCM/CI/CD SRE teams scaling"
+          - "Architected and maintained CI/CD infrastructure"
+          - "Platform scaling across configuration management, metrics, logs, CI/CD, and Kubernetes"
+          - "Designed and implemented standard build templates"
+          - "Core member of building out first GCP environment"
+        skills:
+          - "GCP"
+          - "Salt"
+          - "Prometheus"
+          - "GitLab"
+          - "Terraform"
+          - "Kubernetes"
+          - "Python"
+          - "Go"
+      - id: "linkedin-staff-sre"
+        company: "LinkedIn"
+        title: "Staff Site Reliability Engineer, Jobs & Recruiter"
+        start_date: "2015-02"
+        end_date: "2017-11"
+        location: "San Francisco Bay Area"
+        highlights:
+          - "SRE for 100+ applications across thousands of hosts in a service-oriented architecture"
+          - "Mentoring and training my growing SRE team (3 to 12), while preserving a site-up and members first culture"
+          - "Overhauled monitoring philosophy and implementation across multiple teams"
+          - "Created and led many training & knowledge sharing efforts, speaking at external conferences."
+          - "Started SRE scorecard for service improvement across all of LinkedIn"
+        skills:
+          - "Python"
+          - "Java"
+          - "Go"
+          - "Kafka"
+      - id: "medibank-devops"
+        company: "Medibank Health Solutions"
+        title: "Linux & Cloud Services Engineer (DevOps)"
+        start_date: "2013-03"
+        end_date: "2015-02"
+        location: "Melbourne, Australia"
+        highlights:
+          - "Founding member of Cloud Services team scaling from 2 to 5 engineers"
+          - "Built Medibank's first AWS environment and PCI compliance automation"
+          - "Improved build times and reliability with docker & buildbot"
+          - "Contributed to core code-base and implemented product and reliability features"
+        skills:
+          - "AWS"
+          - "Puppet"
+          - "Python"
+          - "django"
+          - "docker"
+      - id: "toll-sysadmin"
+        company: "Toll Holdings Limited"
+        title: "Senior Linux & Unix Admin"
+        start_date: "2008-12"
+        end_date: "2013-03"
+        location: "Australia"
+        highlights: []
+        skills:
+          - "solaris"
+          - "redhat"
+          - "Python"
+          - "django"
+          - "nagios"
+          - "graphite"
+      - id: "ibm-unix-admin"
+        company: "IBM"
+        title: "Unix Admin"
+        start_date: "2005-12"
+        end_date: "2008-12"
+        location: "Australia"
+        highlights: []
+        skills:
+          - "solaris"
+          - "redhat"
+          - "hpux"
+          - "aix"

@@ -1,0 +1,46 @@
+---
+# Source: basic-app/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: experience
+  labels:
+    app: experience
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: experience
+  template:
+    metadata:
+      labels:
+        app: experience
+    spec:
+      containers:
+        - name: app
+          image: "registry:5000/experience:latest"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SERVICE_PORT
+              value: "8080"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://jaeger-collector.jaeger:4317
+            - name: OTEL_SERVICE_NAME
+              value: experience
+          resources:
+            null
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            failureThreshold: 1
+            periodSeconds: 10
+
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            failureThreshold: 30
+            periodSeconds: 10
