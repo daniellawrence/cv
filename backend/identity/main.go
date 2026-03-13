@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	IDENTITY_SQL       string = "SELECT id, name, email, linkedin FROM identity"
+	IDENTITY_SQL        string = "SELECT id, name, email, linkedin FROM identity"
 	IDENTITY_BY_ID_SQL string = "SELECT id, name, email, linkedin FROM identity WHERE id = ?"
 )
 
@@ -39,7 +39,7 @@ func listidentity(db *sql.DB) http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		defer rows.Close()
+		defer func() { _ = rows.Close() }()
 
 		var results []*identityv1.Identity
 		for rows.Next() {
@@ -93,7 +93,7 @@ func getIdentity(db *sql.DB) http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		defer rows.Close()
+		defer func() { _ = rows.Close() }()
 
 		m := protojson.MarshalOptions{
 			UseProtoNames:   false,
@@ -127,17 +127,17 @@ func getIdentity(db *sql.DB) http.HandlerFunc {
 
 func main() {
 	DB_URL := "root@tcp(identity-db.identity:3306)/cv"
-	fmt.Printf(DB_URL)
+	fmt.Println(DB_URL)
 	db, err := sql.Open("mysql", DB_URL)
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
-	defer db.Close()
+	defer func() { _ = db.Close() }()
 
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/identity", listidentity(db))
 	mux.HandleFunc("/identity/{id}", getIdentity(db))
 
-	common.Listen(mux)
+	log.Fatal(common.Listen(mux))
 }

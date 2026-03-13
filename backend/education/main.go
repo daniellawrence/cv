@@ -38,7 +38,7 @@ func listEducation(db *sql.DB) http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		defer rows.Close()
+		defer func() { _ = rows.Close() }()
 
 		var results []*educationv1.Education
 		for rows.Next() {
@@ -75,16 +75,16 @@ func listEducation(db *sql.DB) http.HandlerFunc {
 
 func main() {
 	DB_URL := "root@tcp(education-db.education:3306)/cv"
-	fmt.Printf(DB_URL)
+	fmt.Printf("%s\n", DB_URL)
 	db, err := sql.Open("mysql", DB_URL)
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
-	defer db.Close()
+	defer func() { _ = db.Close() }()
 
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/education", listEducation(db))
 
-	common.Listen(mux)
+	log.Fatal(common.Listen(mux))
 }

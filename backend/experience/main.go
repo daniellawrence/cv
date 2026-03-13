@@ -42,7 +42,7 @@ func listExperience(db *sql.DB) http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		defer rows.Close()
+		defer func() { _ = rows.Close() }()
 
 		var results []*experiencev1.Experience
 		for rows.Next() {
@@ -98,16 +98,16 @@ func listExperience(db *sql.DB) http.HandlerFunc {
 
 func main() {
 	DB_URL := "root@tcp(experience-db.experience:3306)/cv"
-	fmt.Printf(DB_URL)
+	fmt.Printf("%s\n", DB_URL)
 	db, err := sql.Open("mysql", DB_URL)
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
-	defer db.Close()
+	defer func() { _ = db.Close() }()
 
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/experience", listExperience(db))
 	mux.HandleFunc("/experience/{offset}/{limit}", listExperience(db))
-	common.Listen(mux)
+	log.Fatal(common.Listen(mux))
 }

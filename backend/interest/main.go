@@ -52,7 +52,7 @@ func listInterest(db *sql.DB) http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		defer rows.Close()
+		defer func() { _ = rows.Close() }()
 
 		var results []*interestv1.Interest
 		for rows.Next() {
@@ -106,7 +106,7 @@ func getInterest(db *sql.DB) http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		defer rows.Close()
+		defer func() { _ = rows.Close() }()
 
 		m := protojson.MarshalOptions{
 			UseProtoNames:   false,
@@ -140,16 +140,16 @@ func getInterest(db *sql.DB) http.HandlerFunc {
 
 func main() {
 	DB_URL := "root@tcp(interest-db.interest:3306)/cv"
-	fmt.Printf(DB_URL)
+	fmt.Print("%s", DB_URL)
 	db, err := sql.Open("mysql", DB_URL)
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
-	defer db.Close()
+	defer func() { _ = db.Close() }()
 
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/interest", listInterest(db))
 	mux.HandleFunc("/interest/{id}", getInterest(db))
-	common.Listen(mux)
+	log.Fatal(common.Listen(mux))
 }

@@ -11,8 +11,8 @@ import (
 
 func setupMux() *http.ServeMux {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/identity", listidentity)
-	mux.HandleFunc("/identity/{id}", getIdentity)
+	mux.HandleFunc("/identity", listidentity(nil))
+	mux.HandleFunc("/identity/{id}", getIdentity(nil))
 	return mux
 }
 

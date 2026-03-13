@@ -52,7 +52,7 @@ func healthz(w http.ResponseWriter, r *http.Request) {
 func Listen(mux *http.ServeMux) error {
 
 	shutdown := InitTracing()
-	defer shutdown(context.Background())
+	defer func() { _ = shutdown(context.Background()) }()
 
 	// Wrap only the app routes with otelhttp — healthz sits outside it
 	appHandler := otelhttp.NewHandler(mux, "http-server")

@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/base64"
+	"log"
 	"net/http"
 
 	"github.com/daniellawrence/cv/backend/common"
@@ -78,5 +79,5 @@ func main() {
 
 	mux.HandleFunc("/qrcode", getQRCode)
 
-	common.Listen(mux)
+	log.Fatal(common.Listen(mux))
 }
