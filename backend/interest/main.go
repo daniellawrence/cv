@@ -1,56 +1,131 @@
 package main
 
 import (
+	"database/sql"
+	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
 
 	common "github.com/daniellawrence/cv/backend/common"
 	interestv1 "github.com/daniellawrence/cv/gen/go/interest/v1"
 
+	_ "github.com/go-sql-driver/mysql"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-func listInterest(w http.ResponseWriter, r *http.Request) {
-	m := protojson.MarshalOptions{
-		UseProtoNames:   false,
-		EmitUnpopulated: true,
+const (
+	INTEREST_SQL       string = "SELECT id, type, names FROM interest"
+	INTEREST_BY_ID_SQL string = "SELECT id, type, names FROM interest WHERE id = ?"
+)
+
+func scanInterest(rows *sql.Rows) (*interestv1.Interest, error) {
+	i := &interestv1.Interest{}
+	var namesJSON string
+	if err := rows.Scan(&i.Id, &i.Type, &namesJSON); err != nil {
+		return nil, err
 	}
-
-	w.Header().Set("Content-Type", "application/json")
-
-	data, err := m.Marshal(&interestv1.ListInterestResponse{
-		Interest: interests,
-	})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	if err := json.Unmarshal([]byte(namesJSON), &i.Names); err != nil {
+		return nil, err
 	}
-
-	_, err = w.Write(data)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
+	return i, nil
 }
 
-func getInterest(w http.ResponseWriter, r *http.Request) {
-	m := protojson.MarshalOptions{
-		UseProtoNames:   false,
-		EmitUnpopulated: true,
-	}
+func listInterest(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx, span := otel.Tracer("interest").Start(r.Context(), "db.query.interest", trace.WithSpanKind(trace.SpanKindClient))
+		defer span.End()
+		span.SetAttributes(
+			attribute.String("db.statement", INTEREST_SQL),
+			attribute.String("db.system", "mysql"),
+			attribute.String("peer.service", "interest-db"),
+		)
 
-	w.Header().Set("Content-Type", "application/json")
+		rows, err := db.QueryContext(ctx, INTEREST_SQL)
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, err.Error())
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer rows.Close()
 
-	id := r.PathValue("id")
-
-	for _, interest := range interests {
-		if interest.Id == id {
-			data, err := m.Marshal(interest)
+		var results []*interestv1.Interest
+		for rows.Next() {
+			i, err := scanInterest(rows)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
+			results = append(results, i)
+		}
 
+		m := protojson.MarshalOptions{
+			UseProtoNames:   false,
+			EmitUnpopulated: true,
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+
+		data, err := m.Marshal(&interestv1.ListInterestResponse{
+			Interest: results,
+		})
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		_, err = w.Write(data)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+}
+
+func getInterest(db *sql.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+
+		ctx, span := otel.Tracer("interest").Start(r.Context(), "db.query.interest.byid", trace.WithSpanKind(trace.SpanKindClient))
+		defer span.End()
+		span.SetAttributes(
+			attribute.String("db.statement", INTEREST_BY_ID_SQL),
+			attribute.String("db.system", "mysql"),
+			attribute.String("peer.service", "interest-db"),
+		)
+
+		rows, err := db.QueryContext(ctx, INTEREST_BY_ID_SQL, id)
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, err.Error())
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer rows.Close()
+
+		m := protojson.MarshalOptions{
+			UseProtoNames:   false,
+			EmitUnpopulated: true,
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+
+		if rows.Next() {
+			i, err := scanInterest(rows)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			data, err := m.Marshal(i)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 			_, err = w.Write(data)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -58,17 +133,23 @@ func getInterest(w http.ResponseWriter, r *http.Request) {
 			}
 			return
 		}
-	}
 
-	http.Error(w, "interest not found", http.StatusNotFound)
+		http.Error(w, "interest not found", http.StatusNotFound)
+	}
 }
 
 func main() {
+	DB_URL := "root@tcp(interest-db.interest:3306)/cv"
+	fmt.Printf(DB_URL)
+	db, err := sql.Open("mysql", DB_URL)
+	if err != nil {
+		log.Fatalf("failed to connect to database: %v", err)
+	}
+	defer db.Close()
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/interest", listInterest)
-	mux.HandleFunc("/interest/{id}", getInterest)
+	mux.HandleFunc("/interest", listInterest(db))
+	mux.HandleFunc("/interest/{id}", getInterest(db))
 	common.Listen(mux)
-
 }

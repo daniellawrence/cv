@@ -1,0 +1,17 @@
+misql:
+  enabled: true
+  data:
+    columns:
+      - id
+      - type
+      - names
+    rows:
+      - id: "tech"
+        type: "Technical Interests"
+        names: '["Site Reliability Engineering","Observability Architecture","Continuous Deployment","Developer Tooling","Process Improvement"]'
+      - id: "skills"
+        type: "Languages / Skills"
+        names: '["go","python","observability","ai-skills","prometheus-stack"]'
+      - id: "hobbies"
+        type: "Hobbies"
+        names: '["3D printing / All things maker","Home Automation","Wildlife Rescue"]'

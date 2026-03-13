@@ -1,0 +1,13 @@
+misql:
+  enabled: true
+  data:
+    columns:
+      - id
+      - name
+      - email
+      - linkedin
+    rows:
+      - id: "dsl"
+        name: "Daniel Lawrence"
+        email: "dslawrence@protonmail.com"
+        linkedin: "https://www.linkedin.com/in/dannylawrence/"
