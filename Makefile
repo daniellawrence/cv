@@ -8,9 +8,12 @@ ARCH := amd64
 
 BUF=buf
 
-.PHONY: setup proto test clean lint
+.PHONY: setup proto test clean lint provision
 
 install: install-k3d install-kubectl install-helm install-helmfile
+
+provision:
+	$(MAKE) -C infra/ansible run
 
 setup:
 	go install github.com/bufbuild/buf/cmd/buf@latest

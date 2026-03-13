@@ -14,6 +14,15 @@ for arg in "$@"; do
     shift 2>/dev/null || true
 done
 
+if [[ "${TARGET}" == "prod" ]]; then
+    IMAGE_PREFIX="localhost:5001"
+    if ! curl -sf http://localhost:5001/v2/ > /dev/null 2>&1; then
+        echo "ERROR: production registry not reachable at localhost:5001"
+        echo "Open the SSH tunnel first:"
+        echo "  ssh -NL 7443:localhost:6443 -L 5001:localhost:5001 root@dansysadm.com"
+        exit 1
+    fi
+fi
 
 BUILD_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
@@ -42,11 +51,3 @@ for SERVICE_DOCKERFILE in $(find backend -name Dockerfile);do
     docker push ${IMAGE_NAME}
 
 done
-
-if [[ "${TARGET}" == "prod" ]];then
-    rsync -e ssh --delete -avz dist/* root@dansysadm.com:/dist/
-    for IMAGE in $(cd ./dist && ls );do
-        ssh root@dansysadm.com "cat /dist/${IMAGE} | gunzip | k3s ctr images import -"
-    done
-    ssh root@dansysadm.com "k3s ctr images ls |grep dansysadm.com/images/"
-fi
