@@ -9,6 +9,15 @@ repos:
           - --local-crds=infra/crds/traefik
         files: ^infra/deployments/artifacts/
 
+  - repo: local
+    hooks:
+      - id: eslint
+        name: eslint
+        language: system
+        entry: bash -c 'cd frontend && npm run lint'
+        files: ^frontend/src/
+        pass_filenames: false
+
   - repo: https://github.com/adrienverge/yamllint
     rev: v1.38.0
     hooks:

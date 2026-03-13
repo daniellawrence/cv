@@ -271,8 +271,6 @@ export default function TraceDebugPanel() {
 
   const hasTraces = trace !== null && spanRows.length > 0
   const hasErrors = spanRows.some(hasError)
-  const jaegerUiUrl = `${ServiceEndpoints.jaegerQuery}/trace/${traceId}`
-
   return (
     <>
       {/* Prominent trigger button — rendered in document flow below the CV card */}

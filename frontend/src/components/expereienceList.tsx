@@ -7,7 +7,7 @@ export default function ExperienceList({limit, offset}: {limit: number; offset: 
 
   useEffect(() => {
     fetchExperience({limit, offset}).then(setExperience)
-  }, [])
+  }, [limit, offset])
 
 
   return (

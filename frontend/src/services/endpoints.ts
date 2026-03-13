@@ -1,6 +1,6 @@
 const env = import.meta.env
 
-const runtime = (window as any).RUNTIME_CONFIG ?? {}
+const runtime = (window as { RUNTIME_CONFIG?: Record<string, string> }).RUNTIME_CONFIG ?? {}
 
 export const ServiceEndpoints = {
     experience:
