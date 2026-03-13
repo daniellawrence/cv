@@ -18,8 +18,8 @@ spec:
     spec:
       containers:
         - name: app
-          image: "dansysadm.com/images/identity:latest"
-          imagePullPolicy: Never
+          image: "registry:5000/identity:latest"
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:

@@ -18,8 +18,8 @@ spec:
     spec:
       containers:
         - name: app
-          image: "dansysadm.com/images/qrcode:latest"
-          imagePullPolicy: Never
+          image: "registry:5000/qrcode:latest"
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
