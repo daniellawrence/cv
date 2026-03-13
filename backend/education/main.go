@@ -10,10 +10,6 @@ import (
 	educationv1 "github.com/daniellawrence/cv/gen/go/education/v1"
 
 	_ "github.com/go-sql-driver/mysql"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/codes"
-	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -23,21 +19,12 @@ const (
 
 func listEducation(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		ctx, span := otel.Tracer("education").Start(r.Context(), "db.query.education", trace.WithSpanKind(trace.SpanKindClient))
-		defer span.End()
-		span.SetAttributes(
-			attribute.String("db.statement", EDUCATION_SQL),
-			attribute.String("db.system", "mysql"),
-			attribute.String("peer.service", "education-db"),
-		)
-
-		rows, err := db.QueryContext(ctx, EDUCATION_SQL)
+		rows, span, err := common.QueryDB(r.Context(), db, EDUCATION_SQL)
 		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		defer span.End()
 		defer func() { _ = rows.Close() }()
 
 		var results []*educationv1.Education
@@ -76,7 +63,7 @@ func listEducation(db *sql.DB) http.HandlerFunc {
 func main() {
 	DB_URL := "root@tcp(education-db.education:3306)/cv"
 	fmt.Printf("%s\n", DB_URL)
-	db, err := sql.Open("mysql", DB_URL)
+	db, err := common.OpenDB("mysql", DB_URL)
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}

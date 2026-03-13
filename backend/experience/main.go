@@ -11,10 +11,6 @@ import (
 	experiencev1 "github.com/daniellawrence/cv/gen/go/experience/v1"
 
 	_ "github.com/go-sql-driver/mysql"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/codes"
-	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -27,21 +23,12 @@ func listExperience(db *sql.DB) http.HandlerFunc {
 		offset := common.GetPathInt(r, "offset", 0)
 		limit := common.GetPathInt(r, "limit", 4)
 
-		ctx, span := otel.Tracer("experience").Start(r.Context(), "db.query.experience", trace.WithSpanKind(trace.SpanKindClient))
-		defer span.End()
-		span.SetAttributes(
-			attribute.String("db.statement", EXPERIENCE_SQL),
-			attribute.String("db.system", "mysql"),
-			attribute.String("peer.service", "experience-db"),
-		)
-
-		rows, err := db.QueryContext(ctx, EXPERIENCE_SQL)
+		rows, span, err := common.QueryDB(r.Context(), db, EXPERIENCE_SQL)
 		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		defer span.End()
 		defer func() { _ = rows.Close() }()
 
 		var results []*experiencev1.Experience
@@ -99,7 +86,7 @@ func listExperience(db *sql.DB) http.HandlerFunc {
 func main() {
 	DB_URL := "root@tcp(experience-db.experience:3306)/cv"
 	fmt.Printf("%s\n", DB_URL)
-	db, err := sql.Open("mysql", DB_URL)
+	db, err := common.OpenDB("mysql", DB_URL)
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}

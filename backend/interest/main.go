@@ -11,10 +11,6 @@ import (
 	interestv1 "github.com/daniellawrence/cv/gen/go/interest/v1"
 
 	_ "github.com/go-sql-driver/mysql"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/codes"
-	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -37,21 +33,12 @@ func scanInterest(rows *sql.Rows) (*interestv1.Interest, error) {
 
 func listInterest(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		ctx, span := otel.Tracer("interest").Start(r.Context(), "db.query.interest", trace.WithSpanKind(trace.SpanKindClient))
-		defer span.End()
-		span.SetAttributes(
-			attribute.String("db.statement", INTEREST_SQL),
-			attribute.String("db.system", "mysql"),
-			attribute.String("peer.service", "interest-db"),
-		)
-
-		rows, err := db.QueryContext(ctx, INTEREST_SQL)
+		rows, span, err := common.QueryDB(r.Context(), db, INTEREST_SQL)
 		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		defer span.End()
 		defer func() { _ = rows.Close() }()
 
 		var results []*interestv1.Interest
@@ -91,21 +78,12 @@ func getInterest(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
 
-		ctx, span := otel.Tracer("interest").Start(r.Context(), "db.query.interest.byid", trace.WithSpanKind(trace.SpanKindClient))
-		defer span.End()
-		span.SetAttributes(
-			attribute.String("db.statement", INTEREST_BY_ID_SQL),
-			attribute.String("db.system", "mysql"),
-			attribute.String("peer.service", "interest-db"),
-		)
-
-		rows, err := db.QueryContext(ctx, INTEREST_BY_ID_SQL, id)
+		rows, span, err := common.QueryDB(r.Context(), db, INTEREST_BY_ID_SQL, id)
 		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		defer span.End()
 		defer func() { _ = rows.Close() }()
 
 		m := protojson.MarshalOptions{
@@ -140,8 +118,8 @@ func getInterest(db *sql.DB) http.HandlerFunc {
 
 func main() {
 	DB_URL := "root@tcp(interest-db.interest:3306)/cv"
-	fmt.Print("%s", DB_URL)
-	db, err := sql.Open("mysql", DB_URL)
+	fmt.Printf("%s\n", DB_URL)
+	db, err := common.OpenDB("mysql", DB_URL)
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}

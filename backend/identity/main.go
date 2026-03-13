@@ -10,10 +10,6 @@ import (
 	identityv1 "github.com/daniellawrence/cv/gen/go/identity/v1"
 
 	_ "github.com/go-sql-driver/mysql"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/codes"
-	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -24,21 +20,12 @@ const (
 
 func listidentity(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		ctx, span := otel.Tracer("identity").Start(r.Context(), "db.query.identity", trace.WithSpanKind(trace.SpanKindClient))
-		defer span.End()
-		span.SetAttributes(
-			attribute.String("db.statement", IDENTITY_SQL),
-			attribute.String("db.system", "mysql"),
-			attribute.String("peer.service", "identity-db"),
-		)
-
-		rows, err := db.QueryContext(ctx, IDENTITY_SQL)
+		rows, span, err := common.QueryDB(r.Context(), db, IDENTITY_SQL)
 		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		defer span.End()
 		defer func() { _ = rows.Close() }()
 
 		var results []*identityv1.Identity
@@ -78,21 +65,12 @@ func getIdentity(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
 
-		ctx, span := otel.Tracer("identity").Start(r.Context(), "db.query.identity.byid", trace.WithSpanKind(trace.SpanKindClient))
-		defer span.End()
-		span.SetAttributes(
-			attribute.String("db.statement", IDENTITY_BY_ID_SQL),
-			attribute.String("db.system", "mysql"),
-			attribute.String("peer.service", "identity-db"),
-		)
-
-		rows, err := db.QueryContext(ctx, IDENTITY_BY_ID_SQL, id)
+		rows, span, err := common.QueryDB(r.Context(), db, IDENTITY_BY_ID_SQL, id)
 		if err != nil {
-			span.RecordError(err)
-			span.SetStatus(codes.Error, err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+		defer span.End()
 		defer func() { _ = rows.Close() }()
 
 		m := protojson.MarshalOptions{
@@ -128,7 +106,7 @@ func getIdentity(db *sql.DB) http.HandlerFunc {
 func main() {
 	DB_URL := "root@tcp(identity-db.identity:3306)/cv"
 	fmt.Println(DB_URL)
-	db, err := sql.Open("mysql", DB_URL)
+	db, err := common.OpenDB("mysql", DB_URL)
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
