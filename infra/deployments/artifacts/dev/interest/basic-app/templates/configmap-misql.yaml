@@ -1,0 +1,24 @@
+---
+# Source: basic-app/templates/configmap-misql.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: misql-data
+data:
+  interest.yaml: |
+
+    columns:
+    - id
+    - type
+    - names
+    rows:
+    - id: tech
+      names: '["Site Reliability Engineering","Observability Architecture","Continuous
+        Deployment","Developer Tooling","Process Improvement"]'
+      type: Technical Interests
+    - id: skills
+      names: '["go","python","observability","ai-skills","prometheus-stack"]'
+      type: Languages / Skills
+    - id: hobbies
+      names: '["3D printing / All things maker","Home Automation","Wildlife Rescue"]'
+      type: Hobbies

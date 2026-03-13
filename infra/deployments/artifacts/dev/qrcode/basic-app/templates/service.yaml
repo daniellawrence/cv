@@ -1,0 +1,14 @@
+---
+# Source: basic-app/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: qrcode
+spec:
+  type: ClusterIP
+  selector:
+    app: qrcode
+  ports:
+    - port: 8080
+      targetPort: 
+      protocol: TCP

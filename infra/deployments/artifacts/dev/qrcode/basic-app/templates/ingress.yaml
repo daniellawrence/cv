@@ -1,0 +1,19 @@
+---
+# Source: basic-app/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: qrcode
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: qrcode.localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: qrcode
+                port:
+                  number: 8080
