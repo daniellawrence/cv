@@ -1,0 +1,97 @@
+- name: Install nginx and stream module
+  apt:
+    name:
+      - nginx
+      - libnginx-mod-stream
+    state: present
+    update_cache: true
+
+- name: Fetch external IP
+  uri:
+    url: https://httpbin.org/ip
+    return_content: true
+  register: httpbin_response
+  delegate_to: localhost
+  become: false
+
+- name: Set external IP fact
+  set_fact:
+    external_ip: "{{ (httpbin_response.content | from_json).origin }}"
+
+- name: Resolve k8s.dansysadm.com to IP
+  command: getent hosts k8s.dansysadm.com
+  register: k8s_resolve
+  changed_when: false
+
+- name: Set k8s IP fact
+  set_fact:
+    k8s_ip: "{{ k8s_resolve.stdout.split()[0] }}"
+
+- name: Create nginx stream-enabled directory
+  file:
+    path: /etc/nginx/stream-enabled
+    state: directory
+    mode: "0755"
+
+- name: Ensure nginx.conf includes stream-enabled
+  lineinfile:
+    path: /etc/nginx/nginx.conf
+    line: "stream { include /etc/nginx/stream-enabled/*; }"
+    insertafter: EOF
+  notify: Reload nginx
+
+- name: Remove old HTTP proxy config for kubectl (replaced by stream)
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/nginx/sites-enabled/tcp-proxy
+    - /etc/nginx/sites-available/tcp-proxy
+  notify: Reload nginx
+
+- name: Deploy TCP stream proxy config for kubectl
+  template:
+    src: tcp-proxy.conf.j2
+    dest: /etc/nginx/stream-enabled/tcp-proxy
+    mode: "0644"
+  notify: Reload nginx
+
+- name: Deploy HTTP proxy config for registry
+  template:
+    src: registry-proxy.conf.j2
+    dest: /etc/nginx/sites-available/registry-proxy
+    mode: "0644"
+  notify: Reload nginx
+
+- name: Enable registry proxy config
+  file:
+    src: /etc/nginx/sites-available/registry-proxy
+    dest: /etc/nginx/sites-enabled/registry-proxy
+    state: link
+  notify: Reload nginx
+
+- name: Deploy dansysadm.com nginx config
+  template:
+    src: dansysadm.com.conf.j2
+    dest: /etc/nginx/sites-available/dansysadm.com
+    mode: "0644"
+  notify: Reload nginx
+
+- name: Enable dansysadm.com site
+  file:
+    src: /etc/nginx/sites-available/dansysadm.com
+    dest: /etc/nginx/sites-enabled/dansysadm.com
+    state: link
+  notify: Reload nginx
+
+- name: Remove default nginx site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: Reload nginx
+
+- name: Start and enable nginx
+  systemd:
+    name: nginx
+    state: started
+    enabled: true

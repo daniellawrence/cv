@@ -1,0 +1,11 @@
+# TCP stream proxy for kubectl (6443)
+# Restricted to external IP fetched at deploy time: {{ external_ip }}
+
+server {
+    listen 107.170.198.14:6443;
+
+    allow {{ external_ip }};
+    deny all;
+
+    proxy_pass 127.0.0.1:6443;
+}

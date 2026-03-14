@@ -54,7 +54,7 @@
 
 - name: Write kubeconfig to temp file
   shell: |
-    k3d kubeconfig get k0 | sed 's|server: https://.*|server: https://127.0.0.1:7443|' > /tmp/k3d-k0-kubeconfig.yaml
+    k3d kubeconfig get k0 | sed 's|server: https://.*|server: https://k8s.dansysadm.com:6443|' > /tmp/k3d-k0-kubeconfig.yaml
   changed_when: false
 
 - name: Fetch kubeconfig locally
