@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: "k8s.dansysadm.com:5001/interest:latest"
+          image: "ghcr.io/daniellawrence/cv-interest:master"
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

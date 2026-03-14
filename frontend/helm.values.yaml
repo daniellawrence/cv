@@ -1,3 +1,7 @@
+image:
+  repo: k8s.dansysadm.com:5001
+  tag: latest
+
 frontendruntimeconfig:
   enabled: true
   services:

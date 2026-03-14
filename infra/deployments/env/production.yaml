@@ -2,7 +2,8 @@ service:
   type: ClusterIP
 
 image:
-  repo: k8s.dansysadm.com:5001
+  repo: ghcr.io/daniellawrence
+  tag: master
 
 ingress:
   enabled: true

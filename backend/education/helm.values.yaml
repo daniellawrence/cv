@@ -1,3 +1,6 @@
+image:
+  name: cv-education
+
 misql:
   enabled: true
   data:
