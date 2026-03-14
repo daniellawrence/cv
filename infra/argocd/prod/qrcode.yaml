@@ -14,7 +14,7 @@ spec:
         - ../../env/production.yaml
         - ../../../../backend/qrcode/helm.values.yaml
   destination:
-    server: https://kubernetes.default.svc
+    server: https://k8s.dansysadm.com:6443
     namespace: qrcode
   syncPolicy:
     automated:

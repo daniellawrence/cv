@@ -9,7 +9,7 @@ spec:
     - https://github.com/daniellawrence/cv
   destinations:
     - namespace: "*"
-      server: https://kubernetes.default.svc
+      server: https://k8s.dansysadm.com:6443
   clusterResourceWhitelist:
     - group: ""
       kind: Namespace

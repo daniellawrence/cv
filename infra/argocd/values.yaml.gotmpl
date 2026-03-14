@@ -6,6 +6,21 @@ configs:
     # Let Traefik handle TLS termination
     server.insecure: true
 
+extraObjects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: cluster-production
+      namespace: argocd
+      labels:
+        argocd.argoproj.io/secret-type: cluster
+    type: Opaque
+    stringData:
+      name: production
+      server: "https://k8s.dansysadm.com:6443"
+      config: >-
+        {"tlsClientConfig":{"insecure":false,"caData":"{{ env "ARGOCD_PROD_CA_DATA" }}","certData":"{{ env "ARGOCD_PROD_CERT_DATA" }}","keyData":"{{ env "ARGOCD_PROD_KEY_DATA" }}"}}
+
 server:
   ingress:
     enabled: true

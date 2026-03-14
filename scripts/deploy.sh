@@ -7,9 +7,7 @@ if [[ "${1}" == "prod" ]];then
     export ENVIRONMENT="production"
     export KUBECONFIG=${GIT_ROOT}/infra/k8s/kubeconfig.production.yaml
     if ! ./bin/kubectl get nodes > /dev/null 2>&1; then
-        echo "ERROR: cannot reach production cluster"
-        echo "Open the SSH tunnel first:"
-        echo "  ssh -NL 7443:localhost:6443 -L 5001:localhost:5001 root@dansysadm.com"
+        echo "ERROR: cannot reach production cluster at https://k8s.dansysadm.com:6443"
         exit 1
     fi
 fi

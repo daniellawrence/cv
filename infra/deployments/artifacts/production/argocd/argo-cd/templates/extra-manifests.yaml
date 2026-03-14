@@ -1,0 +1,14 @@
+---
+# Source: argo-cd/templates/extra-manifests.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    argocd.argoproj.io/secret-type: cluster
+  name: cluster-production
+  namespace: argocd
+stringData:
+  config: '{"bearerToken":"","tlsClientConfig":{"insecure":false,"caData":""}}'
+  name: production
+  server: ""
+type: Opaque

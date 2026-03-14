@@ -15,11 +15,11 @@ for arg in "$@"; do
 done
 
 if [[ "${TARGET}" == "prod" ]]; then
-    IMAGE_PREFIX="localhost:5001"
-    if ! curl -sf http://localhost:5001/v2/ > /dev/null 2>&1; then
-        echo "ERROR: production registry not reachable at localhost:5001"
-        echo "Open the SSH tunnel first:"
-        echo "  ssh -NL 7443:localhost:6443 -L 5001:localhost:5001 root@dansysadm.com"
+    IMAGE_PREFIX="k8s.dansysadm.com:5001"
+    probe_result=$(docker manifest inspect "${IMAGE_PREFIX}/probe:test" 2>&1 || true)
+    if echo "${probe_result}" | grep -qiE "server gave HTTP response|connection refused|no such host|unable to resolve"; then
+        echo "ERROR: docker cannot reach registry at ${IMAGE_PREFIX}"
+        echo "  Ensure ${IMAGE_PREFIX} is listed in /etc/docker/daemon.json insecure-registries"
         exit 1
     fi
 fi

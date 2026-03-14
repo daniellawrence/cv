@@ -94,6 +94,9 @@ releases:
           - apply
           - -f
           - ../argocd/dev/
+      - events: ["postsync"]
+        showlogs: true
+        command: ../../scripts/apply-prod-apps.sh
 
   - name: jaeger
     namespace: jaeger
