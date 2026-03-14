@@ -20,13 +20,15 @@ fi
     template \
     --output-dir-template "artifacts/${ENVIRONMENT}/{{ .Release.Name }}/" 
 
+./bin/helmfile \
+    --environment ${ENVIRONMENT} \
+    --helm-binary ${PWD}/bin/helm \
+    --file infra/deployments/helmfile.yaml \
+    --selector tier=infra \
+    sync
+    
 if [[ "${ENVIRONMENT}" == "dev" ]];then
-    ./bin/helmfile \
-        --environment ${ENVIRONMENT} \
-        --helm-binary ${PWD}/bin/helm \
-        --file infra/deployments/helmfile.yaml \
-        --selector tier=infra \
-        sync
+
     ./bin/helmfile \
         --environment ${ENVIRONMENT} \
         --helm-binary ${PWD}/bin/helm \
