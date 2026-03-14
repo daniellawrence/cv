@@ -78,3 +78,8 @@ bin/helmfile:
 	@curl -fsSL -o bin/helmfile https://github.com/roboll/helmfile/releases/latest/download/helmfile_$(OS)_$(ARCH)
 	@chmod +x bin/helmfile
 	@echo "✓ Helmfile installed: $$(bin/helmfile version)"
+
+# Render
+.PHONY: render
+render:
+	./scripts/render.sh
