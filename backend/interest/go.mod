@@ -1,6 +1,6 @@
 module github.com/daniellawrence/cv/backend/interest
 
-go 1.25.0
+go 1.26.1
 
 require (
 	github.com/daniellawrence/cv/backend/common v0.0.0-20260311011629-0caef30d1124

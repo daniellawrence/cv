@@ -1,6 +1,6 @@
 module github.com/daniellawrence/cv/backend/common
 
-go 1.25.0
+go 1.26.1
 
 require (
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.67.0
