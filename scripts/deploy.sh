@@ -10,6 +10,7 @@ if [[ "${1}" == "prod" ]];then
         echo "ERROR: cannot reach production cluster at https://k8s.dansysadm.com:6443"
         exit 1
     fi
+    ./scripts/make_images.sh prod
 fi
 
 ./bin/helmfile  \
@@ -34,17 +35,6 @@ if [[ "${ENVIRONMENT}" == "dev" ]];then
         sync
 
 fi
-
-
-if [[ "${ENVIRONMENT}" == "production" ]];then
-    ./bin/helmfile \
-        --environment ${ENVIRONMENT} \
-        --helm-binary ${PWD}/bin/helm \
-        --file infra/deployments/helmfile.yaml \
-        --selector tier=app \
-        sync
-fi
-
 
 ./bin/kubectl rollout restart deployment -n education
 ./bin/kubectl rollout restart deployment -n experience

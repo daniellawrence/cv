@@ -10,6 +10,7 @@ spec:
     targetRevision: HEAD
     path: infra/deployments/charts/cv-app
     helm:
+      releaseName: interest
       valueFiles:
         - ../../env/production.yaml
         - ../../../../backend/interest/helm.values.yaml

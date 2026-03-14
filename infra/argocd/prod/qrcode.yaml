@@ -10,6 +10,7 @@ spec:
     targetRevision: HEAD
     path: infra/deployments/charts/cv-app
     helm:
+      releaseName: qrcode
       valueFiles:
         - ../../env/production.yaml
         - ../../../../backend/qrcode/helm.values.yaml

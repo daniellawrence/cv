@@ -10,6 +10,7 @@ spec:
     targetRevision: HEAD
     path: infra/deployments/charts/cv-app
     helm:
+      releaseName: experience
       valueFiles:
         - ../../env/production.yaml
         - ../../../../backend/experience/helm.values.yaml

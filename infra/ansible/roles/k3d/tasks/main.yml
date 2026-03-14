@@ -12,6 +12,14 @@
     name: docker.io
     state: present
 
+- name: Configure Docker insecure registry
+  copy:
+    dest: /etc/docker/daemon.json
+    content: |
+      {"insecure-registries": ["k8s.dansysadm.com:5001"]}
+    mode: "0644"
+  notify: Restart Docker
+
 - name: Start and enable Docker
   systemd:
     name: docker
@@ -35,15 +43,20 @@
     src: ../../../../k8s/k3d.production.yaml
     dest: /etc/k3d.production.yaml
     mode: "0644"
+  register: k3d_config
 
 - name: Check if cluster exists
   shell: k3d cluster list -o json | python3 -c "import sys,json; print(any(c['name']=='k0' for c in json.load(sys.stdin)))"
   register: cluster_exists
   changed_when: false
 
+- name: Delete k3d cluster if config changed
+  shell: k3d cluster delete k0
+  when: cluster_exists.stdout == "True" and k3d_config.changed
+
 - name: Create k3d cluster
   shell: k3d cluster create --config /etc/k3d.production.yaml
-  when: cluster_exists.stdout == "False"
+  when: cluster_exists.stdout == "False" or k3d_config.changed
 
 - name: Wait for node ready
   shell: k3d kubeconfig get k0 | KUBECONFIG=/dev/stdin kubectl get nodes

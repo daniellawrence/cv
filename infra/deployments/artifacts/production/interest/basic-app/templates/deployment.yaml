@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: "registry:5000/interest:latest"
+          image: "k8s.dansysadm.com:5001/interest:latest"
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

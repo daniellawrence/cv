@@ -8,7 +8,7 @@ metadata:
   name: cluster-production
   namespace: argocd
 stringData:
-  config: '{"bearerToken":"","tlsClientConfig":{"insecure":false,"caData":""}}'
+  config: '{"tlsClientConfig":{"insecure":false,"caData":"","certData":"","keyData":""}}'
   name: production
-  server: ""
+  server: https://k8s.dansysadm.com:6443
 type: Opaque

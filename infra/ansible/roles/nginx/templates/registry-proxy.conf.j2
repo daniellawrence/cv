@@ -5,6 +5,9 @@ server {
     listen 107.170.198.14:5001;
 
     allow {{ external_ip }};
+    allow 107.170.198.14;
+    allow 172.21.0.2;
+
     deny all;
 
     client_max_body_size 0;
