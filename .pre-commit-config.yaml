@@ -33,10 +33,10 @@ repos:
         files: ^backend/
         pass_filenames: false
 
-#  - repo: local
-#    hooks:
-#      - id: render-check
-#        name: Render files check
-#        entry: bash -c "./scripts/render.sh && git diff --exit-code infra/deployments/artifacts"
-#        language: system
-#        pass_filenames: false
+  - repo: local
+    hooks:
+      - id: render-check
+        name: Render files check
+        entry: bash -c "./scripts/render.sh && git diff --exit-code infra/deployments/artifacts"
+        language: system
+        pass_filenames: false
