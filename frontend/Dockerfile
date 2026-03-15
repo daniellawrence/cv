@@ -10,12 +10,13 @@ COPY gen/ts ./gen/ts
 
 # Install dependencies first (better caching)
 COPY package.json package-lock.json* ./
-RUN npm install
+RUN npm ci --ignore-scripts 2>/dev/null || npm install
 
 # Copy source
 COPY . .
 
 # Build static site
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN npm run build
 
 
