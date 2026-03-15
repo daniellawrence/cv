@@ -5,14 +5,14 @@ FROM node:20-bookworm AS builder
 
 WORKDIR /build
 
-# Copy protobuf generated files first (required for build)
-COPY gen/ts ./gen/ts
+# Copy only what we need for building
+COPY package.json package-lock.json* ./
 
 # Install dependencies first (better caching)
-COPY package.json package-lock.json* ./
-RUN npm ci --ignore-scripts 2>/dev/null || npm install
+RUN npm ci --ignore-scripts || npm install
 
-# Copy source
+# Copy protobuf files and source code together
+COPY gen/ts ./gen/ts
 COPY . .
 
 # Build static site
