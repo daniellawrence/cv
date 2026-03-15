@@ -8,21 +8,15 @@ WORKDIR /build
 # Copy package files first for caching
 COPY package.json package-lock.json* ./
 
-# Install dependencies, but skip the file: dependency for now
-RUN npm ci --ignore-scripts || npm install --no-optional
-
-# Manually copy and link @cv/proto
-RUN mkdir -p node_modules/@cv && cp -r ../gen/ts node_modules/@cv/proto 2>/dev/null || echo "Proto files may not be available yet"
-
-# Copy source including gen/ts (in build context)
-COPY . .
-
-# Reinstall with all dependencies now that proto is in place
+# Install all dependencies including file: dependency
 RUN npm install
 
-# Build static site
+# Copy source and proto files (gen/ts is in build context at root)
+COPY . .
+
+# Build static site with error handling
 ENV NODE_OPTIONS="--max-old-space-size=4096"
-RUN npm run build
+RUN set -e && echo "Starting build..." && npm run build && echo "Build completed successfully"
 
 
 # -----------------------------
