@@ -1,7 +1,7 @@
 # -----------------------------
 # Stage 1 — Build frontend
 # -----------------------------
-FROM node:20-alpine AS builder
+FROM node:20-bookworm AS builder
 
 WORKDIR /build
 
