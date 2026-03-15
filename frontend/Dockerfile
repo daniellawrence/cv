@@ -6,12 +6,9 @@ WORKDIR /app/frontend
 COPY frontend/package.json frontend/package-lock.json* ./
 
 # Install all dependencies including file: dependency
-RUN npm install --no-optional
+RUN npm install
 
-# Copy source code and proto files
-COPY . .
-
-# Build static site
+# Build static site with verbose output
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN npm run build
 
