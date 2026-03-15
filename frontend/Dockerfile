@@ -15,9 +15,12 @@ RUN npm ci --ignore-scripts || npm install
 COPY gen/ts ./gen/ts
 COPY . .
 
-# Build static site
+# Debug: list directory contents
+RUN ls -la /build && echo "---" && ls -la /build/gen/ts 2>/dev/null || echo "No gen/ts found"
+
+# Build static site with error output
 ENV NODE_OPTIONS="--max-old-space-size=4096"
-RUN npm run build
+RUN npm run build 2>&1 || (echo "Build failed, checking package.json..." && cat package.json)
 
 
 # -----------------------------
