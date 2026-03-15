@@ -11,9 +11,9 @@ RUN npm install
 # Copy source and proto files (gen/ts is in build context at root)
 COPY . .
 
-# Build static site with error handling
+# Build static site
 ENV NODE_OPTIONS="--max-old-space-size=4096"
-RUN set -e && echo "Starting build..." && npm run build && echo "Build completed successfully"
+RUN npm run build
 
 
 FROM nginx:1.27-alpine
