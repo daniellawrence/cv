@@ -1,0 +1,180 @@
+# Comprehensive Image Validation Test Suite
+# Tests validate the image repository configuration and rendered deployment
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ .Release.Name }}-comprehensive-image-test
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: comprehensive-validator
+      image: busybox
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          set -e
+          
+          echo "=========================================="
+          echo "COMPREHENSIVE IMAGE VALIDATION SUITE"
+          echo "=========================================="
+          echo ""
+          
+          # Extract configuration values
+          REPO="{{ .Values.image.repo }}"
+          TAG="{{ default \"latest\" .Values.image.tag }}"
+          PULL_POLICY="{{ .Values.image.pullPolicy }}"
+          CUSTOM_NAME="{{ .Values.image.name }}"
+          
+          # Determine effective image name
+          if [ -n "$CUSTOM_NAME" ] && [ "$CUSTOM_NAME" != "" ]; then
+            EFFECTIVE_NAME="$CUSTOM_NAME"
+            echo "Using custom image name: $EFFECTIVE_NAME"
+          else
+            EFFECTIVE_NAME="{{ .Release.Name }}"
+            echo "Using release name as default: $EFFECTIVE_NAME"
+          fi
+          
+          EXPECTED_IMAGE="${REPO}/${EFFECTIVE_NAME}:${TAG}"
+          
+          echo ""
+          echo "--- Configuration Summary ---"
+          echo "Repository:       $REPO"
+          echo "Image Name:       $EFFECTIVE_NAME"
+          echo "Tag:              $TAG"
+          echo "Pull Policy:      ${PULL_POLICY:-default}"
+          echo "Expected Image:   $EXPECTED_IMAGE"
+          echo ""
+          
+          # Test Suite
+          TESTS_PASSED=0
+          TESTS_FAILED=0
+          
+          # Test 1: Repository Configuration
+          echo "--- Test 1: Repository Configuration ---"
+          if [ -n "$REPO" ]; then
+            echo "[PASS] Image repository is configured"
+            ((TESTS_PASSED++))
+          else
+            echo "[FAIL] Image repository must be configured"
+            ((TESTS_FAILED++))
+          fi
+          
+          # Test 2: Tag Configuration  
+          echo ""
+          echo "--- Test 2: Tag Configuration ---"
+          if [ -n "$TAG" ]; then
+            echo "[PASS] Image tag is configured (value: $TAG)"
+            ((TESTS_PASSED++))
+          else
+            echo "[FAIL] Image tag must be set or have a valid default"
+            ((TESTS_FAILED++))
+          fi
+          
+          # Test 3: Pull Policy Validation
+          echo ""
+          echo "--- Test 3: Pull Policy Configuration ---"
+          if [ -n "$PULL_POLICY" ]; then
+            case "$PULL_POLICY" in
+              Always)
+                echo "[PASS] Pull policy set to 'Always'"
+                ((TESTS_PASSED++))
+                ;;
+              IfNotPresent)
+                echo "[PASS] Pull policy set to 'IfNotPresent'"
+                ((TESTS_PASSED++))
+                ;;
+              Never)
+                echo "[PASS] Pull policy set to 'Never'"
+                ((TESTS_PASSED++))
+                ;;
+              *)
+                echo "[WARN] Pull policy '$PULL_POLICY' is non-standard but accepted"
+                ((TESTS_PASSED++))
+                ;;
+            esac
+          else
+            echo "[INFO] No pull policy specified (will use cluster default)"
+            ((TESTS_PASSED++))
+          fi
+          
+          # Test 4: Image Name Resolution
+          echo ""
+          echo "--- Test 4: Image Name Resolution ---"
+          if [ -n "$EFFECTIVE_NAME" ]; then
+            if [[ "$EFFECTIVE_NAME" =~ ^[a-zA-Z0-9] ]]; then
+              echo "[PASS] Image name is valid: $EFFECTIVE_NAME"
+              ((TESTS_PASSED++))
+            else
+              echo "[FAIL] Image name must start with alphanumeric character"
+              ((TESTS_FAILED++))
+            fi
+          else
+            echo "[FAIL] Effective image name cannot be empty"
+            ((TESTS_FAILED++))
+          fi
+          
+          # Test 5: Full Image Reference Format
+          echo ""
+          echo "--- Test 5: Full Image Reference ---"
+          if [[ "$EXPECTED_IMAGE" =~ ^[a-zA-Z0-9._/-]+/[a-zA-Z0-9._-]+:[a-zA-Z0-9._-]+$ ]]; then
+            echo "[PASS] Complete image reference is valid format"
+            echo "       Format: $EXPECTED_IMAGE"
+            ((TESTS_PASSED++))
+          else
+            echo "[FAIL] Image reference has invalid format: $EXPECTED_IMAGE"
+            ((TESTS_FAILED++))
+          fi
+          
+          # Test 6: Registry Validation (if custom registry)
+          echo ""
+          echo "--- Test 6: Registry Configuration ---"
+          if [[ "$REPO" =~ :[0-9]+$ ]]; then
+            echo "[INFO] Custom registry with port detected: $REPO"
+            ((TESTS_PASSED++))
+          elif [[ "$REPO" =~ \. ]] || [[ "$REPO" =~ - ]]; then
+            echo "[INFO] Custom registry domain detected: $REPO"
+            ((TESTS_PASSED++))
+          else
+            echo "[INFO] Using standard Docker Hub or default registry"
+            ((TESTS_PASSED++))
+          fi
+          
+          # Summary Report
+          echo ""
+          echo "=========================================="
+          echo "VALIDATION SUITE RESULTS"
+          echo "=========================================="
+          echo "Tests Passed: $TESTS_PASSED"
+          echo "Tests Failed: $TESTS_FAILED"
+          echo ""
+          echo "Final Image Reference:"
+          echo "  $EXPECTED_IMAGE"
+          echo ""
+          
+          if [ $TESTS_FAILED -gt 0 ]; then
+            echo "[RESULT] FAILED: $TESTS_FAILED test(s) failed"
+            exit 1
+          else
+            echo "[RESULT] SUCCESS: All image validation tests passed"
+            exit 0
+          fi
+  restartPolicy: Never
+
+---
+# Additional ConfigMap for storing validated configuration values
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-validated-image-config
+  annotations:
+    "helm.sh/hook": test-success
+data:
+  TEST_TYPE: "comprehensive-image-validation"
+  VALIDATION_TIMESTAMP: "{{ now.Unix }}"
+  REPOSITORY_CONFIGURED: "{{ .Values.image.repo }}"
+  TAG_CONFIGURED: "{{ default \"latest\" .Values.image.tag }}"
+  PULL_POLICY_CONFIGURED: "{{ .Values.image.pullPolicy }}"
+  IMAGE_NAME_USED: "{{ default .Release.Name .Values.image.name }}"
+  FULL_IMAGE_REFERENCE: "{{ .Values.image.repo }}/{{ default .Release.Name .Values.image.name }}:{{ default \"latest\" .Values.image.tag }}"

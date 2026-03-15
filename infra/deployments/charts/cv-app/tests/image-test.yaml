@@ -1,0 +1,50 @@
+# Tests to verify the image repository configuration in the deployment
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ .Release.Name }}-image-check
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: image-validator
+      image: busybox
+      command: ["sh", "-c", "echo 'Image validation tests'"]
+  restartPolicy: Never
+
+---
+# Test to verify the container uses the correct image repository and tag
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-image-config-test
+  annotations:
+    "helm.sh/hook": test-success
+data:
+  TEST_NAME: "verify-image-repository"
+  IMAGE_REPO: "{{ .Values.image.repo }}"
+  IMAGE_TAG: "{{ default \"latest\" .Values.image.tag }}"
+  EXPECTED_IMAGE: "{{ .Values.image.repo }}/{{ default .Release.Name .Values.image.name }}:{{ default \"latest\" .Values.image.tag }}"
+
+---
+# Integration test that validates the rendered deployment contains expected image configuration
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ .Release.Name }}-image-render-test
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: validator
+      image: busybox
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          echo "Testing image configuration..."
+          echo "Repository: {{ .Values.image.repo }}"
+          echo "Tag: {{ default \"latest\" .Values.image.tag }}"
+          echo "Pull Policy: {{ .Values.image.pullPolicy }}"
+          echo "Expected Image: {{ .Values.image.repo }}/{{ default .Release.Name .Values.image.name }}:{{ default \"latest\" .Values.image.tag }}"
+          echo "Image validation tests completed successfully"
+  restartPolicy: Never

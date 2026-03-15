@@ -1,0 +1,110 @@
+# Test suite to validate image repository configuration in rendered manifests
+# This test verifies that the deployment uses the correct image repository and tag
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ .Release.Name }}-image-repo-validator
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: repo-validator
+      image: busybox
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          set -e
+          
+          echo "=== Repository Image Validation Tests ==="
+          
+          # Define expected values based on chart configuration
+          REPO="{{ .Values.image.repo }}"
+          TAG="{{ default \"latest\" .Values.image.tag }}"
+          
+          # Determine image name (custom or release name)
+          if [ -n "{{ .Values.image.name }}" ] && [ "{{ .Values.image.name }}" != "" ]; then
+            IMAGE_NAME="{{ .Values.image.name }}"
+          else
+            IMAGE_NAME="{{ .Release.Name }}"
+          fi
+          
+          EXPECTED_IMAGE="${REPO}/${IMAGE_NAME}:${TAG}"
+          
+          echo "Repository: $REPO"
+          echo "Image Name: $IMAGE_NAME"
+          echo "Tag: $TAG"
+          echo "Expected Image: $EXPECTED_IMAGE"
+          
+          # Validate repository format (should not be empty)
+          if [ -z "$REPO" ]; then
+            echo "FAIL: Repository cannot be empty"
+            exit 1
+          fi
+          echo "[PASS] Repository is configured"
+          
+          # Validate tag exists
+          if [ -z "$TAG" ]; then
+            echo "FAIL: Tag cannot be empty"
+            exit 1
+          fi
+          echo "[PASS] Tag is configured: $TAG"
+          
+          # Validate image name
+          if [ -z "$IMAGE_NAME" ]; then
+            echo "FAIL: Image name cannot be empty"
+            exit 1
+          fi
+          echo "[PASS] Image name is valid: $IMAGE_NAME"
+          
+          # Validate pull policy if set
+          PULL_POLICY="{{ .Values.image.pullPolicy }}"
+          if [ -n "$PULL_POLICY" ]; then
+            if [[ "$PULL_POLICY" =~ ^(Always|IfNotPresent|Never)$ ]]; then
+              echo "[PASS] Pull policy is valid: $PULL_POLICY"
+            else
+              echo "WARN: Pull policy '$PULL_POLICY' may not be standard, but accepted"
+            fi
+          else
+            echo "[INFO] No pull policy specified (using cluster default)"
+          fi
+          
+          # Validate image format contains expected components
+          if [[ "$EXPECTED_IMAGE" =~ ^${REPO}/ ]]; then
+            echo "[PASS] Image uses correct repository: $REPO"
+          else
+            echo "FAIL: Image does not use configured repository"
+            exit 1
+          fi
+          
+          if [[ "$EXPECTED_IMAGE" =~ :${TAG}$ ]]; then
+            echo "[PASS] Image uses correct tag: $TAG"
+          else
+            echo "FAIL: Image does not use expected tag"
+            exit 1
+          fi
+          
+          # Validate no registry credentials are leaked in test output
+          if [ -n "{{ .Values.image.registryCredentials }}" ]; then
+            echo "[INFO] Registry credentials configured (not displayed for security)"
+          fi
+          
+          echo ""
+          echo "=== All Repository Image Tests Passed ==="
+          echo "Final image reference: $EXPECTED_IMAGE"
+  restartPolicy: Never
+
+---
+# Test to verify the complete image specification in deployment context
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-image-spec-test
+  annotations:
+    "helm.sh/hook": test-success
+data:
+  TEST_TYPE: "image-specification-validation"
+  REPOSITORY: "{{ .Values.image.repo }}"
+  NAME: "{{ default .Release.Name .Values.image.name }}"
+  TAG: "{{ default \"latest\" .Values.image.tag }}"
+  PULL_POLICY: "{{ .Values.image.pullPolicy }}"

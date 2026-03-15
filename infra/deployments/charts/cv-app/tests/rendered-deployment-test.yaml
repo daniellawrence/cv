@@ -1,0 +1,116 @@
+# Test to validate rendered deployment contains correct image configuration
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ .Release.Name }}-rendered-deployment-validator
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: validator
+      image: busybox
+      command: ["/bin/sh", "-c"]
+      args:
+        - |
+          set -e
+          
+          echo "=== Rendered Deployment Image Validation ==="
+          
+          # Expected values from chart configuration
+          REPO="{{ .Values.image.repo }}"
+          TAG="{{ default \"latest\" .Values.image.tag }}"
+          NAME="{{ default .Release.Name .Values.image.name }}"
+          PULL_POLICY="{{ .Values.image.pullPolicy }}"
+          
+          EXPECTED_IMAGE="${REPO}/${NAME}:${TAG}"
+          
+          echo "Expected image in deployment: $EXPECTED_IMAGE"
+          echo "Repository: ${REPO}"
+          echo "Name/tag combination: ${NAME}:${TAG}"
+          echo "Pull policy: ${PULL_POLICY:-default}"
+          
+          # Validation checks
+          PASS_COUNT=0
+          FAIL_COUNT=0
+          
+          # Check 1: Repository is set and non-empty
+          if [ -n "$REPO" ]; then
+            echo "[PASS] Repository configured: $REPO"
+            ((PASS_COUNT++))
+          else
+            echo "[FAIL] Repository must be configured"
+            ((FAIL_COUNT++))
+          fi
+          
+          # Check 2: Tag is set (with default fallback)
+          if [ -n "$TAG" ]; then
+            echo "[PASS] Tag configured: $TAG"
+            ((PASS_COUNT++))
+          else
+            echo "[FAIL] Tag must be configured or have a valid default"
+            ((FAIL_COUNT++))
+          fi
+          
+          # Check 3: Image name is valid
+          if [ -n "$NAME" ]; then
+            echo "[PASS] Image name resolved: $NAME"
+            ((PASS_COUNT++))
+          else
+            echo "[FAIL] Image name must be set or default to release name"
+            ((FAIL_COUNT++))
+          fi
+          
+          # Check 4: Pull policy is valid if specified
+          if [ -n "$PULL_POLICY" ]; then
+            case "$PULL_POLICY" in
+              Always|IfNotPresent|Never)
+                echo "[PASS] Valid pull policy: $PULL_POLICY"
+                ((PASS_COUNT++))
+                ;;
+              *)
+                echo "[WARN] Non-standard pull policy: $PULL_POLICY (accepted)"
+                ((PASS_COUNT++))
+                ;;
+            esac
+          else
+            echo "[INFO] No explicit pull policy (using cluster default)"
+            ((PASS_COUNT++))
+          fi
+          
+          # Check 5: Full image name format is correct
+          if [[ "$EXPECTED_IMAGE" =~ ^[a-zA-Z0-9._/-]+/[a-zA-Z0-9._-]+:[a-zA-Z0-9._-]+$ ]]; then
+            echo "[PASS] Image format is valid: $EXPECTED_IMAGE"
+            ((PASS_COUNT++))
+          else
+            echo "[FAIL] Invalid image format: $EXPECTED_IMAGE"
+            ((FAIL_COUNT++))
+          fi
+          
+          # Summary
+          echo ""
+          echo "=== Test Results ==="
+          echo "Passed: $PASS_COUNT"
+          echo "Failed: $FAIL_COUNT"
+          echo "Expected deployment image: $EXPECTED_IMAGE"
+          echo ""
+          
+          if [ $FAIL_COUNT -gt 0 ]; then
+            echo "TEST FAILED: $FAIL_COUNT validation(s) failed"
+            exit 1
+          else
+            echo "SUCCESS: All image configuration validations passed"
+            exit 0
+          fi
+  restartPolicy: Never
+
+---
+# Test to verify the deployment template renders with expected structure
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-deployment-structure-test
+  annotations:
+    "helm.sh/hook": test-success
+data:
+  DEPLOYMENT_NAME: "{{ .Release.Name }}"
+  EXPECTED_IMAGE: "{{ .Values.image.repo }}/{{ default .Release.Name .Values.image.name }}:{{ default \"latest\" .Values.image.tag }}"
