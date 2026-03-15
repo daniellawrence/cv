@@ -1,0 +1,4 @@
+# Production override for frontend image registry
+image:
+  repo: k8s.dansysadm.com:5001
+  tag: latest

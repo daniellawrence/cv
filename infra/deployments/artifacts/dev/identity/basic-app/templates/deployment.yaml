@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: "registry:5000/cv-identity:latest"
+          image: "registry:5000/identity:latest"
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

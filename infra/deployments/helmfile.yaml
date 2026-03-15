@@ -68,6 +68,9 @@ releases:
     values:
       - {{ toYaml .Environment.Values | nindent 8 }}
       - ../../frontend/helm.values.yaml
+      {{- if eq .Environment.Name "production" }}
+      - env/frontend-prod.yaml
+      {{- end }}
 
   - name: argocd
     namespace: argocd

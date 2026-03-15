@@ -1,5 +1,6 @@
+# Note: In dev environment, this will be overridden by env/dev.yaml to use registry:5000
 image:
-  repo: k8s.dansysadm.com:5001
+  repo: registry:5000
   tag: latest
 
 frontendruntimeconfig:

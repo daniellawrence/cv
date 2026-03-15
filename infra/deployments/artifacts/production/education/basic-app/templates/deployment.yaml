@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: "ghcr.io/daniellawrence/cv-education:master"
+          image: "ghcr.io/daniellawrence/education:master"
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
