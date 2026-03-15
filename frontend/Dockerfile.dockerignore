@@ -1,7 +1,6 @@
 backend/
 gen/go
 infra/
-proto/
 bin/
 dist/
 scripts/
