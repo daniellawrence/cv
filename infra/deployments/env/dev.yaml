@@ -1,6 +1,10 @@
 service:
   type: ClusterIP
 
+image:
+  repo: registry:5000
+  tag: latest
+
 ingress:
   enabled: true
   className: traefik
