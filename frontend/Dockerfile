@@ -1,4 +1,4 @@
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app/frontend
 
@@ -6,9 +6,9 @@ WORKDIR /app/frontend
 COPY frontend/package.json frontend/package-lock.json* ./
 
 # Install all dependencies including file: dependency
-RUN npm install
+RUN npm install --no-optional
 
-# Copy source code
+# Copy source code and proto files
 COPY . .
 
 # Build static site
