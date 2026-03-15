@@ -5,6 +5,9 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+# Copy protobuf generated files first (required for build)
+COPY gen/ts ./gen/ts
+
 # Install dependencies first (better caching)
 COPY frontend/package.json frontend/package-lock.json* ./
 RUN npm install
