@@ -9,12 +9,12 @@ WORKDIR /build
 COPY package.json package-lock.json* ./
 RUN npm ci || npm install
 
-# Copy all source including gen/ts (it's in the build context)
+# Copy source including gen/ts (in build context)
 COPY . .
 
-# Build static site with verbose output
+# Build static site
 ENV NODE_OPTIONS="--max-old-space-size=4096"
-RUN npm run build 2>&1 | tee /tmp/build.log || (echo "Build failed, logs:" && cat /tmp/build.log && exit 1)
+RUN npm run build
 
 
 # -----------------------------
@@ -35,7 +35,7 @@ RUN rm -rf /usr/share/nginx/html/*
 COPY --from=builder /build/dist /usr/share/nginx/html
 
 # Custom nginx config (processed as envsubst template at startup)
-COPY frontend/nginx.conf /etc/nginx/templates/default.conf.template
+COPY nginx.conf /etc/nginx/templates/default.conf.template
 
 EXPOSE 8080
 
