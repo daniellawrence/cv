@@ -6,7 +6,9 @@ This document provides guidelines for agents working on the CV repository, parti
 # Rules
 
 - never break any rule or any reason
-- You are never allowed to run git-commit or git-push
+- You are never allowed to run git-commit or git-push to master, main or production
+- You are allowed to git-commit and push into feat-{short-name} branches, if permission is granted.
+
 
 ## Reference
 
