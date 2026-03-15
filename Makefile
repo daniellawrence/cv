@@ -3,6 +3,7 @@ HELMFILE_VERSION := v3.14.0
 K3D_VERSION := v5.9.0-rc.0
 KUBECTL_VERSION := v1.29.0
 KUBECTL_VALIDATE_VERSION := v0.0.4
+GH_VERSION := latest
 # Hardcoded for Linux amd64
 OS := linux
 ARCH := amd64
@@ -11,7 +12,7 @@ BUF=buf
 
 .PHONY: setup proto test clean lint provision
 
-install: install-k3d install-kubectl install-helm install-helmfile install-kubectl-validate
+install: install-k3d install-kubectl install-helm install-helmfile install-kubectl-validate install-gh
 
 provision:
 	$(MAKE) -C infra/ansible run
@@ -78,6 +79,16 @@ bin/helmfile:
 	@curl -fsSL -o bin/helmfile https://github.com/roboll/helmfile/releases/latest/download/helmfile_$(OS)_$(ARCH)
 	@chmod +x bin/helmfile
 	@echo "✓ Helmfile installed: $$(bin/helmfile version)"
+
+# GitHub CLI
+.PHONY: install-gh
+install-gh: bin/gh
+bin/gh:
+	@echo "Installing gh $(GH_VERSION)..."
+	@mkdir -p bin/
+	@curl -fsSL https://github.com/cli/cli/releases/download/v2.88.1/gh_2.88.1_linux_amd64.tar.gz | tar xz -C bin/ --strip-components=2 gh_2.88.1_linux_amd64/bin
+	@chmod +x bin/gh
+	@echo "✓ gh installed: $$(bin/gh version)"
 
 # Render
 .PHONY: render
