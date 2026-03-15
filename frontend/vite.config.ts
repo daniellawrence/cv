@@ -8,10 +8,4 @@ export default defineConfig({
             proto: "./gen/ts"
         },
     },
-    optimizeDeps: {
-        include: [
-            "@bufbuild/protobuf",
-            "@bufbuild/protobuf/codegenv2",
-        ],
-    },
 })
