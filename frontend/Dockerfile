@@ -5,22 +5,19 @@ FROM node:20-bookworm AS builder
 
 WORKDIR /build
 
-# Copy only what we need for building
-COPY package.json package-lock.json* ./
-
-# Install dependencies first (better caching)
+# Copy only the files needed for building
+COPY frontend/package.json frontend/package-lock.json* ./
 RUN npm ci --ignore-scripts || npm install
 
-# Copy protobuf files and source code together
+# Copy protobuf generated files (required for build)
 COPY gen/ts ./gen/ts
+
+# Copy source code
 COPY . .
 
-# Debug: list directory contents
-RUN ls -la /build && echo "---" && ls -la /build/gen/ts 2>/dev/null || echo "No gen/ts found"
-
-# Build static site with error output
+# Build static site
 ENV NODE_OPTIONS="--max-old-space-size=4096"
-RUN npm run build 2>&1 || (echo "Build failed, checking package.json..." && cat package.json)
+RUN npm run build
 
 
 # -----------------------------
