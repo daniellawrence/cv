@@ -3,20 +3,19 @@
 # -----------------------------
 FROM node:20-alpine AS builder
 
-WORKDIR /app
+WORKDIR /build
 
 # Copy protobuf generated files first (required for build)
 COPY gen/ts ./gen/ts
 
 # Install dependencies first (better caching)
-COPY frontend/package.json frontend/package-lock.json* ./
+COPY package.json package-lock.json* ./
 RUN npm install
 
 # Copy source
 COPY . .
 
 # Build static site
-WORKDIR /app/frontend
 RUN npm run build
 
 
@@ -35,7 +34,7 @@ ENV BUILD_TIMESTAMP=${BUILD_TIMESTAMP}
 RUN rm -rf /usr/share/nginx/html/*
 
 # Copy built frontend
-COPY --from=builder /app/frontend/dist /usr/share/nginx/html
+COPY --from=builder /build/dist /usr/share/nginx/html
 
 # Custom nginx config (processed as envsubst template at startup)
 COPY frontend/nginx.conf /etc/nginx/templates/default.conf.template
