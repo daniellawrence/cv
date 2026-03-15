@@ -5,7 +5,7 @@ export default defineConfig({
     plugins: [react()],
     resolve: {
         alias: {
-            proto: "./gen/ts"
+            proto: "/app/frontend/gen/ts"
         },
     },
 })
