@@ -1,6 +1,6 @@
 FROM node:20-bookworm AS builder
 
-WORKDIR /build
+WORKDIR /app/frontend
 
 # Copy package files first for caching
 COPY frontend/package.json frontend/package-lock.json* ./
@@ -8,7 +8,7 @@ COPY frontend/package.json frontend/package-lock.json* ./
 # Install all dependencies including file: dependency
 RUN npm install
 
-# Copy source and proto files (gen/ts is in build context at root)
+# Copy source code
 COPY . .
 
 # Build static site
@@ -28,7 +28,7 @@ ENV BUILD_TIMESTAMP=${BUILD_TIMESTAMP}
 RUN rm -rf /usr/share/nginx/html/*
 
 # Copy built frontend
-COPY --from=builder /build/dist /usr/share/nginx/html
+COPY --from=builder /app/frontend/dist /usr/share/nginx/html
 
 # Custom nginx config (processed as envsubst template at startup)
 COPY frontend/nginx.conf /etc/nginx/templates/default.conf.template
