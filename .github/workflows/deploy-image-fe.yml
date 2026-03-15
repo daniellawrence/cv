@@ -11,18 +11,14 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build-and-push-image:
+  fe-build-and-push-image:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         service:
-          - backend/education
-          - backend/experience
-          - backend/interest
-          - backend/identity
-          - backend/qrcode
-          
+          - frontend
+
     permissions:
       contents: read
       packages: write
