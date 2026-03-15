@@ -1,12 +1,9 @@
-# -----------------------------
-# Stage 1 — Build frontend
-# -----------------------------
 FROM node:20-bookworm AS builder
 
 WORKDIR /build
 
 # Copy package files first for caching
-COPY package.json package-lock.json* ./
+COPY frontend/package.json frontend/package-lock.json* ./
 
 # Install all dependencies including file: dependency
 RUN npm install
@@ -19,9 +16,6 @@ ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN set -e && echo "Starting build..." && npm run build && echo "Build completed successfully"
 
 
-# -----------------------------
-# Stage 2 — NGINX
-# -----------------------------
 FROM nginx:1.27-alpine
 
 ARG CONTENT_SHA1=unknown
@@ -37,7 +31,7 @@ RUN rm -rf /usr/share/nginx/html/*
 COPY --from=builder /build/dist /usr/share/nginx/html
 
 # Custom nginx config (processed as envsubst template at startup)
-COPY nginx.conf /etc/nginx/templates/default.conf.template
+COPY frontend/nginx.conf /etc/nginx/templates/default.conf.template
 
 EXPOSE 8080
 
