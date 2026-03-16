@@ -30,7 +30,7 @@ for SERVICE_DOCKERFILE in  $(find frontend -name Dockerfile);do
     SERVICE=$(dirname $SERVICE_DOCKERFILE)
     [[ -n "${SERVICE_FILTER}" && "${SERVICE}" != *"${SERVICE_FILTER}"* ]] && continue
     CONTENT_SHA1=$(frontend_content_sha ${SERVICE})
-    IMAGE_NAME=${IMAGE_PREFIX}/${SERVICE}:latest
+    IMAGE_NAME=${IMAGE_PREFIX}/cv-${SERVICE}:latest
     
     docker build -t ${IMAGE_NAME} -f ${SERVICE_DOCKERFILE} \
         --build-arg CONTENT_SHA1="${CONTENT_SHA1}" \
@@ -43,7 +43,7 @@ for SERVICE_DOCKERFILE in $(find backend -name Dockerfile);do
     SERVICE=$(basename $(dirname $SERVICE_DOCKERFILE))
     [[ -n "${SERVICE_FILTER}" && "${SERVICE}" != *"${SERVICE_FILTER}"* ]] && continue
     CONTENT_SHA1=$(backend_content_sha ${SERVICE})
-    IMAGE_NAME=${IMAGE_PREFIX}/${SERVICE}:latest
+    IMAGE_NAME=${IMAGE_PREFIX}/cv-${SERVICE}:latest
     
     docker build -t ${IMAGE_NAME} -f ${SERVICE_DOCKERFILE} \
         --build-arg CONTENT_SHA1="${CONTENT_SHA1}" \
