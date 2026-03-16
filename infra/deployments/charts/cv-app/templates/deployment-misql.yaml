@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: misql
-          image: "dlawrence00/misql:0.0.2"
+          image: "{{ .Values.misql.image.repository }}:{{ .Values.misql.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 3306

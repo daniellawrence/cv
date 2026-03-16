@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: misql
-          image: "dlawrence00/misql:0.0.2"
+          image: "dlawrence00/misql:0.0.3"
           imagePullPolicy: Always
           ports:
             - containerPort: 3306

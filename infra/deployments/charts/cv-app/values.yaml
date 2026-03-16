@@ -22,3 +22,6 @@ frontendruntimeconfig:
 
 misql:
   enabled: false
+  image:
+    repository: dlawrence00/misql
+    tag: 0.0.2
