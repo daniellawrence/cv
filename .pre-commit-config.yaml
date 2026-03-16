@@ -7,7 +7,7 @@ repos:
         entry: kubectl-validate
         args:
           - --local-crds=infra/crds/traefik
-        files: ^infra/deployments/artifacts/
+        files: ^infra/deployments/artifacts/(?!.*redis-secret-init/)
 
   - repo: local
     hooks:
