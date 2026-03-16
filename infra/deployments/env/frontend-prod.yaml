@@ -1,4 +1,4 @@
-# Production override for frontend image registry
+# Production override for frontend image registry - use GHCR compiled image
 image:
-  repo: k8s.dansysadm.com:5001
-  tag: latest
+  repo: ghcr.io/daniellawrence/frontend
+  tag: master
