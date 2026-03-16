@@ -23,7 +23,15 @@ spec:
           env:
             - name: SERVICE_PORT
               value: "{{ .Values.service.port }}"
-              {{- range $key, $value := .Values.env }}
+            {{- if and .Values.buildMetadata .Values.buildMetadata.contentSha1 }}
+            - name: CONTENT_SHA1
+              value: {{ .Values.buildMetadata.contentSha1 | quote }}
+            {{- end }}
+            {{- if and .Values.buildMetadata .Values.buildMetadata.buildTimestamp }}
+            - name: BUILD_TIMESTAMP
+              value: {{ .Values.buildMetadata.buildTimestamp | quote }}
+            {{- end }}
+            {{- range $key, $value := .Values.env }}
             - name: {{ $key }}
               value: {{ $value | quote }}
               {{- end }}

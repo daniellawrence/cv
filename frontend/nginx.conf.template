@@ -5,13 +5,10 @@ server {
     index index.html;
 
     location / {
-        # Add build metadata headers if environment variables are set
-        add_header X-Content-SHA1 "${CONTENT_SHA1}" always;
-        add_header X-Build-Timestamp "${BUILD_TIMESTAMP}" always;
         try_files $uri /index.html;
     }
 
-    # Cache static assets aggressively
+    # Cache static assets aggressively  
     location /assets/ {
         expires 1y;
         add_header Cache-Control "public, immutable";

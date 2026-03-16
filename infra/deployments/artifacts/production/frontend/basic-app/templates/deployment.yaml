@@ -18,13 +18,17 @@ spec:
     spec:
       containers:
         - name: app
-          image: "ghcr.io/daniellawrence/frontend/cv-frontend:master"
+          image: "ghcr.io/daniellawrence/cv-frontend:master"
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
             - name: SERVICE_PORT
               value: "8080"
+            - name: CONTENT_SHA1
+              value: "dev-build"
+            - name: BUILD_TIMESTAMP
+              value: "unknown"
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: http://jaeger-collector.jaeger:4317
             - name: OTEL_SERVICE_NAME

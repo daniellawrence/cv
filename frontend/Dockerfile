@@ -16,11 +16,15 @@ RUN npm run build
 # Production stage - serve with nginx
 FROM nginx:alpine AS production
 
-# Install curl for health checks (optional)
-RUN apk add --no-cache curl
+# Install curl for health checks and envsubst
+RUN apk add --no-cache curl gettext
 
-# Copy custom nginx configuration from frontend directory
-COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
+# Copy custom nginx configuration template
+COPY frontend/nginx.conf.template /etc/nginx/conf.d/default.conf.template
+
+# Copy docker entrypoint script
+COPY frontend/docker-entrypoint.sh /docker-entrypoint.d/99-envsubst-nginx.sh
+RUN chmod +x /docker-entrypoint.d/99-envsubst-nginx.sh
 
 # Copy built files from the builder stage
 COPY --from=builder /app/frontend/dist /usr/share/nginx/html

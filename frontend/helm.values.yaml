@@ -10,3 +10,8 @@ frontendruntimeconfig:
     - interest
     - identity
     - qrcode
+
+# Build metadata for nginx headers (can be empty in dev)
+buildMetadata:
+  contentSha1: "dev-build"
+  buildTimestamp: "unknown"
