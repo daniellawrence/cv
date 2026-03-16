@@ -1,5 +1,5 @@
 image:
-  name: identity
+  name: cv-identity
 
 misql:
   enabled: true

@@ -1,5 +1,5 @@
 image:
-  name: education
+  name: cv-education
 
 misql:
   enabled: true
