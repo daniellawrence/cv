@@ -22,7 +22,7 @@ jobs:
           - backend/interest
           - backend/identity
           - backend/qrcode
-          
+
     permissions:
       contents: read
       packages: write
