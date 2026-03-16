@@ -33,3 +33,8 @@ You might need to inspect generated files, but never edit them directly.
 
 *`infra/deployments/artifacts/ (auto-generated)
 * gen (auto-generated)
+
+## Deploy
+
+* ./scripts/make_images.sh - compile and load images into registries
+* ./scripts/deploy.sh      - deploy into dev
