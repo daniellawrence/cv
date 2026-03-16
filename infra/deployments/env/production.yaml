@@ -3,7 +3,7 @@ service:
 
 image:
   repo: ghcr.io/daniellawrence
-  tag: master
+  tag: main
 
 ingress:
   enabled: true

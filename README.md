@@ -39,8 +39,8 @@ After building, run `make provision` to start a k3d cluster and deploy the appli
 Production images are built and pushed to GitHub Container Registry (GHCR) via GitHub Actions:
 
 1. **Build Process**: GitHub Actions workflows compile each backend service and frontend
-2. **Registry**: Images are pushed to `ghcr.io/daniellawrence/cv-{service}:master`
-3. **Versioning**: Production images use the `master` tag for all services
+2. **Registry**: Images are pushed to `ghcr.io/daniellawrence/cv-{service}:main`
+3. **Versioning**: Production images use the `main` tag for all services
 
 ### GitOps with ArgoCD
 

@@ -2,4 +2,4 @@
 image:
   name: cv-frontend
   repo: ghcr.io/daniellawrence
-  tag: master
+  tag: main
