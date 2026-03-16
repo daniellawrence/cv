@@ -1,8 +1,6 @@
 # Note: In dev environment, this will be overridden by env/dev.yaml to use registry:5000
 image:
   name: cv-frontend
-  repo: registry:5000
-  tag: latest
 
 frontendruntimeconfig:
   enabled: true
