@@ -110,3 +110,38 @@ def test_all_backends_json(name, url):
     """Parametrized test to validate each backend returns valid JSON."""
     data = fetch_json(url)
     assert isinstance(data, dict), f"Backend {name} should return a JSON object"
+
+
+# Health check endpoints for each service (for reference)
+HEALTH_CHECKS = {
+    "identity": "http://identity.localhost/healthz",
+    "experience": "http://experience.localhost/healthz",
+    "education": "http://education.localhost/healthz",
+    "interest": "http://interest.localhost/healthz",
+    "qrcode": "http://qrcode.localhost/healthz",
+}
+
+
+# Parametrized test for all healthz endpoints
+@pytest.mark.parametrize("name, url", [
+    ("identity", "http://identity.localhost/healthz"),
+    ("experience", "http://experience.localhost/healthz"),
+    ("education", "http://education.localhost/healthz"),
+    ("interest", "http://interest.localhost/healthz"),
+    ("qrcode", "http://qrcode.localhost/healthz"),
+])
+def test_all_healthz_endpoints(name, url):
+    """Parametrized test to validate each service healthz endpoint returns ok."""
+    try:
+        with urllib.request.urlopen(url, timeout=10) as response:
+            assert response.status == 200, f"Expected status 200 from {url}, got {response.status}"
+            data = response.read().decode('utf-8').strip()
+            # Healthz can return plain text "ok" or JSON {"status": "ok"}
+            if data.startswith('{'):
+                parsed = json.loads(data)
+                assert isinstance(parsed, dict), f"{name} healthz should return a JSON object"
+                assert parsed.get("status") == "ok", f"{name} healthz expected status 'ok', got '{parsed.get('status')}'"
+            else:
+                assert data == "ok", f"{name} healthz expected plain text 'ok', got '{data}'"
+    except urllib.error.HTTPError as e:
+        pytest.fail(f"HTTP {e.code} error fetching {name} /healthz endpoint: {e.reason}")
