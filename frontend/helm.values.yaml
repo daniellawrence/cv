@@ -15,3 +15,7 @@ frontendruntimeconfig:
 buildMetadata:
   contentSha1: "dev-build"
   buildTimestamp: "unknown"
+
+# Disable misql for frontend service (no database needed)
+misql:
+  enabled: false
