@@ -17,7 +17,7 @@ terraform {
   }
 }
 
-# HTTP provider for fetching dynamic data (public IP)
+# HTTP provider for fetching dynamic data (public IP, GitHub SSH keys)
 provider "http" {}
 
 provider "digitalocean" {
@@ -39,6 +39,23 @@ locals {
   admin_ssh_ips = [jsondecode(data.http.my_ip.response_body).origin]
 }
 
+# Fetch SSH public keys from GitHub user daniellawrence for admin access
+data "http" "github_admin_keys" {
+  url = "https://api.github.com/users/daniellawrence/keys"
+  
+  request_headers = {
+    Accept = "application/vnd.github.v3+json"
+  }
+}
+
+# Create DigitalOcean SSH keys from GitHub admin keys
+resource "digitalocean_ssh_key" "admin_keys" {
+  count       = var.sync_github_admin_keys ? length(jsondecode(data.http.github_admin_keys.response_body)) : 0
+  
+  name        = "daniellawrence-${jsondecode(data.http.github_admin_keys.response_body)[count.index].title}"
+  public_key  = jsondecode(data.http.github_admin_keys.response_body)[count.index].key
+}
+
 # Digital Ocean Droplet (production server for dansysadm.com)
 resource "digitalocean_droplet" "production_server" {
   name       = "dansysadm-prod-01"
@@ -46,8 +63,8 @@ resource "digitalocean_droplet" "production_server" {
   size       = var.droplet_size
   image      = var.image
   
-  # SSH key for access - using manual ID from DigitalOcean
-  ssh_keys   = [var.ssh_key_id]
+  # SSH key for access - use synced GitHub admin keys or manual DO key ID
+  ssh_keys   = var.sync_github_admin_keys ? [digitalocean_ssh_key.admin_keys[0].id] : [var.ssh_key_id]
   
   # Enable monitoring and backups if needed
   monitoring = true
@@ -140,4 +157,12 @@ resource "digitalocean_record" "www_www" {
 output "current_public_ip" {
   description = "Your current public IP address (from httpbin.org)"
   value       = jsondecode(data.http.my_ip.response_body).origin
+}
+
+# Output the synced DigitalOcean SSH key ID for admin access
+output "admin_ssh_key_id" {
+  description = "DigitalOcean SSH key ID synced from GitHub daniellawrence (when sync_github_admin_keys is true)"
+  value       = var.sync_github_admin_keys ? digitalocean_ssh_key.admin_keys[0].id : null
+  
+  depends_on = [digitalocean_ssh_key.admin_keys]
 }

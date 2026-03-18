@@ -8,6 +8,9 @@ enable_floating_ip         = true
 domain_name                = "dansysadm.com"
 
 # IMPORTANT: Update these with your actual values before running terraform apply
-ssh_key_id                 = "" # Replace with your DO SSH key ID (get from Dashboard → Settings → Security)
+ssh_key_id                 = "" # Leave empty when syncing from GitHub (recommended)
 admin_ssh_ips              = []   # Empty to auto-detect via httpbin.org, or specify IPs manually
 kubernetes_client_ips      = []   # Empty; uses var.admin_ssh_ips for k8s API access
+
+# Sync SSH public keys from GitHub user daniellawrence for admin access
+sync_github_admin_keys     = true

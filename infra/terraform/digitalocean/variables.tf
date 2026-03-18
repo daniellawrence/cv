@@ -19,13 +19,24 @@ variable "image" {
 }
 
 variable "ssh_key_id" {
-  description = "Digital Ocean SSH key ID for accessing the server"
+  description = "Digital Ocean SSH key ID for accessing the server (only used if sync_github_admin_keys is false)"
   type        = string
   sensitive   = true
   
   validation {
-    condition     = var.ssh_key_id != ""
-    error_message = "SSH key ID must be provided."
+    condition     = var.sync_github_admin_keys == false ? var.ssh_key_id != "" : true
+    error_message = "SSH key ID must be provided when not syncing from GitHub."
+  }
+}
+
+variable "sync_github_admin_keys" {
+  description = "Whether to sync SSH public keys from GitHub user daniellawrence for admin access"
+  type        = bool
+  default     = true
+  
+  validation {
+    condition     = var.sync_github_admin_keys == true ? var.ssh_key_id == "" : true
+    error_message = "SSH key ID should be empty when syncing from GitHub."
   }
 }
 
@@ -35,7 +46,7 @@ variable "admin_ssh_ips" {
   default     = [] # Auto-detected via data source if empty
   
   validation {
-    condition     = length(var.admin_ssh_ips) > 0 || var.sync_from_github == false ? true : true
+    condition     = length(var.admin_ssh_ips) > 0 || var.sync_github_admin_keys == false ? true : true
     error_message = "At least one admin SSH IP must be specified or auto-detected."
   }
 }
