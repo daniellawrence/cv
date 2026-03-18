@@ -29,13 +29,6 @@ spec:
               value: "dev-build"
             - name: BUILD_TIMESTAMP
               value: "unknown"
-            # Database URL from environment or use default fallbacks per service
-            - name: DATABASE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: database-secrets
-                  key: url
-                  optional: true
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: http://jaeger-collector.jaeger:4317
             - name: OTEL_SERVICE_NAME
