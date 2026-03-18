@@ -21,3 +21,10 @@ frontendruntimeconfig:
 
 # Environment variables to pass to all services
 env: {}
+
+# misql database configuration
+misql:
+  enabled: true
+  image:
+    repository: mysql
+    tag: "8.0"
