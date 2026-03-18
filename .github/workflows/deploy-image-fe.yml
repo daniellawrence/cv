@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - '**'
+    paths:
+      - 'frontend/**'
+      - 'deployments/env/frontend/**'
+      - 'deployments/charts/**'
 
 env:
   REGISTRY: ghcr.io
