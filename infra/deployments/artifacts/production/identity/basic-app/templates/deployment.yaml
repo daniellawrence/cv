@@ -25,7 +25,6 @@ spec:
           env:
             - name: SERVICE_PORT
               value: "8080"
-            # Database URL from environment or use default fallbacks per service
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:

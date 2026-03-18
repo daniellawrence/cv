@@ -31,13 +31,14 @@ spec:
             - name: BUILD_TIMESTAMP
               value: {{ .Values.buildMetadata.buildTimestamp | quote }}
             {{- end }}
-            # Database URL from environment or use default fallbacks per service
+            {{- if .Values.misql.enabled }}
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
                   name: database-secrets
                   key: url
                   optional: true
+            {{- end }}
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: http://jaeger-collector.jaeger:4317
             - name: OTEL_SERVICE_NAME
