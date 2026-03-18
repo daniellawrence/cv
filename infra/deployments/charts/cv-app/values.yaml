@@ -22,9 +22,9 @@ frontendruntimeconfig:
 # Environment variables to pass to all services
 env: {}
 
-# misql database configuration
+# misql database configuration (default disabled, enable per-service as needed)
 misql:
-  enabled: true
+  enabled: false
   image:
     repository: dlawrence00/misql
     tag: "0.0.2"
