@@ -1,0 +1,22 @@
+# Terraform state files (sensitive data)
+*.tfstate
+*.tfstate.*
+
+# Environment variables with secrets
+terraform.tfvars
+*.tfvars.local
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Terraform cache
+*.cache/
+.terraform/
+.terraform.lock.hcl

@@ -4,6 +4,8 @@ K3D_VERSION := v5.9.0-rc.0
 KUBECTL_VERSION := v1.29.0
 KUBECTL_VALIDATE_VERSION := v0.0.4
 GH_VERSION := latest
+TFLINT_VERSION := v0.61.0
+TERRAFORM_VERSION := 1.7.5
 # Hardcoded for Linux amd64
 OS := linux
 ARCH := amd64
@@ -12,7 +14,7 @@ BUF=buf
 
 .PHONY: setup proto test clean lint provision
 
-install: install-k3d install-kubectl install-helm install-helmfile install-kubectl-validate install-gh
+install: install-k3d install-kubectl install-helm install-helmfile install-kubectl-validate install-gh install-terraform install-tflint
 
 provision:
 	$(MAKE) -C infra/ansible run
@@ -89,6 +91,30 @@ bin/gh:
 	@curl -fsSL https://github.com/cli/cli/releases/download/v2.88.1/gh_2.88.1_linux_amd64.tar.gz | tar xz -C bin/ --strip-components=2 gh_2.88.1_linux_amd64/bin
 	@chmod +x bin/gh
 	@echo "✓ gh installed: $$(bin/gh version)"
+
+# Terraform
+.PHONY: install-terraform
+install-terraform: bin/terraform
+bin/terraform:
+	@echo "Installing Terraform $(TERRAFORM_VERSION)..."
+	@mkdir -p bin/
+	@curl -fsSL https://releases.hashicorp.com/terraform/$(TERRAFORM_VERSION)/terraform_$(TERRAFORM_VERSION)_$(OS)_$(ARCH).zip -o bin/terraform.zip
+	@unzip -j bin/terraform.zip terraform -d bin/
+	@rm bin/terraform.zip
+	@chmod +x bin/terraform
+	@echo "✓ Terraform installed: $$(bin/terraform version)"
+
+# Tflint
+.PHONY: install-tflint
+install-tflint: bin/tflint
+bin/tflint:
+	@echo "Installing Tflint $(TFLINT_VERSION)..."
+	@mkdir -p bin/
+	@curl -fsSL https://github.com/terraform-linters/tflint/releases/download/$(TFLINT_VERSION)/tflint_$(OS)_$(ARCH).zip -o bin/tflint.zip
+	@unzip -j bin/tflint.zip tflint -d bin/
+	@rm bin/tflint.zip
+	@chmod +x bin/tflint
+	@echo "✓ Tflint installed: $$(bin/tflint --version)"
 
 # Render
 .PHONY: render
