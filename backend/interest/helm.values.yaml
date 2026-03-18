@@ -1,6 +1,10 @@
 image:
   name: cv-interest
 
+# Database configuration - can be overridden by DATABASE_URL environment variable at runtime
+database:
+  url: "root@tcp(interest-db.interest:3306)/cv"
+
 misql:
   enabled: true
   data:

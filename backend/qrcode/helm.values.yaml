@@ -1,2 +1,6 @@
 image:
   name: cv-qrcode
+
+# Database configuration - can be overridden by DATABASE_URL environment variable at runtime
+database:
+  url: "root@tcp(qrcode-db.qrcode:3306)/cv"
