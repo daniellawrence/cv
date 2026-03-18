@@ -94,3 +94,11 @@ bin/gh:
 .PHONY: render
 render:
 	./scripts/render.sh
+
+# Run integration tests in tests/integration directory
+test:
+	$(MAKE) -C tests/integration test
+
+# Alias for integration tests
+test-integration:
+	$(MAKE) -C tests/integration test
