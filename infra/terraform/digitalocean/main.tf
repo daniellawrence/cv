@@ -34,11 +34,6 @@ data "http" "my_ip" {
   }
 }
 
-# Parse the client IP from httpbin response
-locals {
-  admin_ssh_ips = [jsondecode(data.http.my_ip.response_body).origin]
-}
-
 # Fetch SSH public keys from GitHub user daniellawrence for admin access
 data "http" "github_admin_keys" {
   url = "https://api.github.com/users/daniellawrence/keys"
