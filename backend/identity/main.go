@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -104,9 +103,9 @@ func getIdentity(db *sql.DB) http.HandlerFunc {
 }
 
 func main() {
-	DB_URL := "root@tcp(identity-db.identity:3306)/cv"
-	fmt.Println(DB_URL)
-	db, err := common.OpenDB("mysql", DB_URL)
+	defaultDBURL := "root@tcp(identity-db.identity:3306)/cv"
+	
+	db, err := common.ConnectWithValidation(defaultDBURL)
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}

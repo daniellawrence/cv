@@ -1,6 +1,10 @@
 image:
   name: cv-education
 
+# Database configuration - can be overridden by DATABASE_URL environment variable at runtime
+database:
+  url: "root@tcp(education-db.education:3306)/cv"
+
 misql:
   enabled: true
   data:

@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -61,9 +60,9 @@ func listEducation(db *sql.DB) http.HandlerFunc {
 }
 
 func main() {
-	DB_URL := "root@tcp(education-db.education:3306)/cv"
-	fmt.Printf("%s\n", DB_URL)
-	db, err := common.OpenDB("mysql", DB_URL)
+	defaultDBURL := "root@tcp(education-db.education:3306)/cv"
+	
+	db, err := common.ConnectWithValidation(defaultDBURL)
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}

@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -84,9 +83,9 @@ func listExperience(db *sql.DB) http.HandlerFunc {
 }
 
 func main() {
-	DB_URL := "root@tcp(experience-db.experience:3306)/cv"
-	fmt.Printf("%s\n", DB_URL)
-	db, err := common.OpenDB("mysql", DB_URL)
+	defaultDBURL := "root@tcp(experience-db.experience:3306)/cv"
+	
+	db, err := common.ConnectWithValidation(defaultDBURL)
 	if err != nil {
 		log.Fatalf("failed to connect to database: %v", err)
 	}
