@@ -17,7 +17,7 @@ terraform {
   }
 }
 
-# HTTP provider for fetching dynamic data (public IP, GitHub keys)
+# HTTP provider for fetching dynamic data (public IP)
 provider "http" {}
 
 provider "digitalocean" {
@@ -39,23 +39,6 @@ locals {
   admin_ssh_ips = [jsondecode(data.http.my_ip.response_body).origin]
 }
 
-# Use GitHub REST API to fetch SSH keys (more reliable than github provider)
-data "http" "github_ssh_keys" {
-  url = "https://api.github.com/users/daniellawrence/keys"
-  
-  request_headers = {
-    Accept = "application/vnd.github.v3+json"
-  }
-}
-
-# Create DigitalOcean SSH key from GitHub's public keys
-resource "digitalocean_ssh_key" "from_github" {
-  count       = var.sync_from_github ? length(jsondecode(data.http.github_ssh_keys.response_body)) : 0
-  
-  name        = "daniellawrence-${jsondecode(data.http.github_ssh_keys.response_body)[count.index].title}"
-  public_key  = jsondecode(data.http.github_ssh_keys.response_body)[count.index].key
-}
-
 # Digital Ocean Droplet (production server for dansysadm.com)
 resource "digitalocean_droplet" "production_server" {
   name       = "dansysadm-prod-01"
@@ -63,8 +46,8 @@ resource "digitalocean_droplet" "production_server" {
   size       = var.droplet_size
   image      = var.image
   
-  # SSH key for access - using GitHub public keys synced to DO or manual ID
-  ssh_keys   = var.sync_from_github ? [digitalocean_ssh_key.from_github[0].id] : [var.ssh_key_id]
+  # SSH key for access - using manual ID from DigitalOcean
+  ssh_keys   = [var.ssh_key_id]
   
   # Enable monitoring and backups if needed
   monitoring = true
@@ -102,11 +85,11 @@ resource "digitalocean_firewall" "production_firewall" {
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
   
-  # Allow Kubernetes API if running K8s cluster
+  # Allow Kubernetes API - restricted to admin SSH IPs (k8s configured by ansible)
   inbound_rule {
     protocol         = "tcp"
     port_range       = "6443"
-    source_addresses = var.kubernetes_client_ips
+    source_addresses = var.admin_ssh_ips
   }
   
   # Outbound rules (allow all)
@@ -157,18 +140,4 @@ resource "digitalocean_record" "www_www" {
 output "current_public_ip" {
   description = "Your current public IP address (from httpbin.org)"
   value       = jsondecode(data.http.my_ip.response_body).origin
-}
-
-# Output GitHub SSH keys information
-output "github_ssh_keys_info" {
-  description = "SSH keys from GitHub account daniellawrence"
-  value       = jsondecode(data.http.github_ssh_keys.response_body)
-}
-
-# Output the synced DigitalOcean SSH key ID for use in droplet configuration
-output "synced_digitalocean_key_id" {
-  description = "DigitalOcean SSH key ID synced from GitHub (when sync_from_github is true)"
-  value       = var.sync_from_github ? digitalocean_ssh_key.from_github[0].id : null
-  
-  depends_on = [digitalocean_ssh_key.from_github]
 }

@@ -19,24 +19,13 @@ variable "image" {
 }
 
 variable "ssh_key_id" {
-  description = "Digital Ocean SSH key ID for accessing the server (only used if sync_from_github is false)"
+  description = "Digital Ocean SSH key ID for accessing the server"
   type        = string
   sensitive   = true
   
   validation {
-    condition     = var.sync_from_github == false ? var.ssh_key_id != "" : true
-    error_message = "SSH key ID must be provided when not syncing from GitHub."
-  }
-}
-
-variable "sync_from_github" {
-  description = "Whether to sync SSH keys from GitHub account daniellawrence to DigitalOcean"
-  type        = bool
-  default     = false
-  
-  validation {
-    condition     = var.sync_from_github == true ? var.ssh_key_id == "" : true
-    error_message = "SSH key ID should be empty when syncing from GitHub."
+    condition     = var.ssh_key_id != ""
+    error_message = "SSH key ID must be provided."
   }
 }
 
@@ -46,19 +35,19 @@ variable "admin_ssh_ips" {
   default     = [] # Auto-detected via data source if empty
   
   validation {
-    condition     = var.sync_from_github == false && length(var.admin_ssh_ips) > 0 ? true : true
-    error_message = "SSH key ID or manual admin IPs must be provided when not syncing from GitHub."
+    condition     = length(var.admin_ssh_ips) > 0 || var.sync_from_github == false ? true : true
+    error_message = "At least one admin SSH IP must be specified or auto-detected."
   }
 }
 
 variable "kubernetes_client_ips" {
-  description = "List of IP addresses allowed to access Kubernetes API (port 6443)"
+  description = "List of IP addresses allowed to access Kubernetes API (port 6443) - restricted to admin IPs for ansible-configured k8s"
   type        = list(string)
-  default     = [""] # Update with your K8s client IPs in production
+  default     = [] # Empty; uses var.admin_ssh_ips instead
   
   validation {
-    condition     = length(var.kubernetes_client_ips) > 0
-    error_message = "At least one Kubernetes client IP must be specified."
+    condition     = true # Always valid as it's optional
+    error_message = "Kubernetes client IP configuration is optional."
   }
 }
 
@@ -72,11 +61,4 @@ variable "domain_name" {
   description = "Domain name for the production site (dansysadm.com)"
   type        = string
   default     = "dansysadm.com"
-}
-
-# Optional: Kubernetes cluster configuration
-variable "create_kubernetes_cluster" {
-  description = "Whether to create a managed Kubernetes cluster instead of single droplet"
-  type        = bool
-  default     = false
 }
