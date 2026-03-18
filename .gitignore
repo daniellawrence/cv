@@ -6,3 +6,4 @@ dist
 kubeconfig.*
 infra/deployments/artifacts/dev/argocd/
 infra/deployments/artifacts/production/argocd/
+__pycache__
