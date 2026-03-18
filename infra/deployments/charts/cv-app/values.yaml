@@ -26,5 +26,5 @@ env: {}
 misql:
   enabled: true
   image:
-    repository: mysql
-    tag: "8.0"
+    repository: dlawrence00/misql
+    tag: "0.0.2"

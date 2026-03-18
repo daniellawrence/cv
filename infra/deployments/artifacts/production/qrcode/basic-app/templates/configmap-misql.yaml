@@ -1,0 +1,10 @@
+---
+# Source: basic-app/templates/configmap-misql.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: misql-data
+data:
+  qrcode.yaml: |
+
+    null
