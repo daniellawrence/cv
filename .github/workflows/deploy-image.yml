@@ -8,6 +8,7 @@ on:
       - 'backend/**'
       - 'deployments/env/backend/**'
       - 'deployments/charts/**'
+      - '.github/workflows/deploy-image.yml'
 
 env:
   REGISTRY: ghcr.io
@@ -55,6 +56,14 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.svc.outputs.name }}
 
+      - name: Compute build metadata
+        id: build-meta
+        run: |
+          CONTENT_SHA1=$(git rev-parse HEAD)
+          BUILD_TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          echo "content_sha1=$CONTENT_SHA1" >> "$GITHUB_OUTPUT"
+          echo "build_timestamp=$BUILD_TIMESTAMP" >> "$GITHUB_OUTPUT"
+
       - name: Build and push Docker image
         id: push
         uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
@@ -64,6 +73,9 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            CONTENT_SHA1=${{ steps.build-meta.outputs.content_sha1 }}
+            BUILD_TIMESTAMP=${{ steps.build-meta.outputs.build_timestamp }}
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v3
