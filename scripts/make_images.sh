@@ -34,6 +34,7 @@ for SERVICE_DOCKERFILE in  $(find frontend -name Dockerfile);do
     
     docker build -t ${IMAGE_NAME} -f ${SERVICE_DOCKERFILE} \
         --build-arg CONTENT_SHA1="${CONTENT_SHA1}" \
+        --build-arg BUILD_TIMESTAMP="${BUILD_TIMESTAMP}" \
         .
     docker push ${IMAGE_NAME}
 
@@ -47,6 +48,7 @@ for SERVICE_DOCKERFILE in $(find backend -name Dockerfile);do
     
     docker build -t ${IMAGE_NAME} -f ${SERVICE_DOCKERFILE} \
         --build-arg CONTENT_SHA1="${CONTENT_SHA1}" \
+        --build-arg BUILD_TIMESTAMP="${BUILD_TIMESTAMP}" \
         .
     docker push ${IMAGE_NAME}
 
