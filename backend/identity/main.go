@@ -64,7 +64,7 @@ func getIdentity(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
 
-		if !common.ValidateID(id) {
+		if !common.ValidateStringID(id) {
 			http.Error(w, "invalid id format", http.StatusBadRequest)
 			return
 		}

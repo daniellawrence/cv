@@ -35,6 +35,8 @@ spec:
               value: http://jaeger-collector.jaeger:4317
             - name: OTEL_SERVICE_NAME
               value: experience
+            - name: CORS_ALLOWED_ORIGINS
+              value: "https://dansysadm.com,https://education.dansysadm.com,https://experience.dansysadm.com,https://identity.dansysadm.com,https://interest.dansysadm.com,https://qrcode.dansysadm.com"
           resources:
             null
           livenessProbe:

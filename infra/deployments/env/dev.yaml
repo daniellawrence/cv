@@ -17,3 +17,8 @@ ingress:
   className: traefik
   domain: localhost
   schema: http
+
+# CORS configuration - allow subdomains for development
+corsAllowedOrigins:
+  - "http://localhost"
+  - "http://*.localhost"

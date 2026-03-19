@@ -48,6 +48,34 @@ func ValidateIDOrEmpty(id string) bool {
 	return ValidateID(id)
 }
 
+// ValidateStringID validates that an ID parameter contains only safe characters
+// Allows alphanumeric characters, hyphens, and underscores
+func ValidateStringID(id string) bool {
+	if id == "" {
+		return false
+	}
+	// Ensure ID contains only alphanumeric characters, hyphens, and underscores
+	for _, c := range id {
+		if !((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+			(c >= '0' && c <= '9') || c == '-' || c == '_') {
+			return false
+		}
+	}
+	// Reject IDs that are too long (potential overflow attack)
+	if len(id) > 100 {
+		return false
+	}
+	return true
+}
+
+// ValidateStringIDOrEmpty allows empty IDs (for cases where empty is valid)
+func ValidateStringIDOrEmpty(id string) bool {
+	if id == "" {
+		return true
+	}
+	return ValidateStringID(id)
+}
+
 // SanitizeString removes potentially dangerous characters from user input
 func SanitizeString(s string) string {
 	return strings.TrimSpace(s)
