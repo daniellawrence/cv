@@ -35,6 +35,8 @@ spec:
               value: http://jaeger-collector.jaeger:4317
             - name: OTEL_SERVICE_NAME
               value: experience
+            - name: CORS_ALLOWED_ORIGINS
+              value: "http://localhost,http://*.localhost"
           resources:
             null
           livenessProbe:
