@@ -64,6 +64,11 @@ func getIdentity(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		id := r.PathValue("id")
 
+		if !common.ValidateID(id) {
+			http.Error(w, "invalid id format", http.StatusBadRequest)
+			return
+		}
+
 		rows, span, err := common.QueryDB(r.Context(), db, IDENTITY_BY_ID_SQL, id)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
