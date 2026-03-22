@@ -14,8 +14,3 @@ ingress:
 # CORS configuration - production origins (all subdomains)
 corsAllowedOrigins:
   - "https://dansysadm.com"
-  - "https://education.dansysadm.com"
-  - "https://experience.dansysadm.com"
-  - "https://identity.dansysadm.com"
-  - "https://interest.dansysadm.com"
-  - "https://qrcode.dansysadm.com"
